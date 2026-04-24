@@ -15,10 +15,6 @@ def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def verify_password(password: str, password_hash: str) -> bool:
-    return pwd_context.verify(password, password_hash)
-
-
 def is_admin_configured(db: Session) -> bool:
     return _get_admin_user(db) is not None
 
