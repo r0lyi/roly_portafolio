@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.models.user import User
 from app.schemas.user import UserCreate, UserUpdate
+from app.services import auth_service
 
 
 def list_users(db: Session) -> list[User]:
@@ -19,11 +20,17 @@ def get_user_or_404(db: Session, user_id: int) -> User:
 
 
 def create_user(db: Session, payload: UserCreate) -> User:
-    existing_user = db.scalar(select(User).where(User.email == payload.email))
+    auth_service.ensure_admin_not_configured(db)
+
+    normalized_email = payload.email.strip().lower()
+    existing_user = db.scalar(select(User).where(User.email == normalized_email))
     if existing_user is not None:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already registered")
 
-    user = User(**payload.model_dump())
+    user = User(
+        email=normalized_email,
+        password_hash=auth_service.hash_password(payload.password),
+    )
     db.add(user)
     db.commit()
     db.refresh(user)
@@ -36,12 +43,15 @@ def update_user(db: Session, user_id: int, payload: UserUpdate) -> User:
 
     email = update_data.get("email")
     if email and email != user.email:
-        existing_user = db.scalar(select(User).where(User.email == email))
+        normalized_email = email.strip().lower()
+        existing_user = db.scalar(select(User).where(User.email == normalized_email))
         if existing_user is not None:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already registered")
+        user.email = normalized_email
 
-    for field, value in update_data.items():
-        setattr(user, field, value)
+    password = update_data.get("password")
+    if password:
+        user.password_hash = auth_service.hash_password(password)
 
     db.commit()
     db.refresh(user)
