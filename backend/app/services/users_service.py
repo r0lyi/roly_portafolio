@@ -58,22 +58,7 @@ def ensure_default_admin(db: Session, *, email: str, password: str) -> User:
         db.refresh(user)
         return user
 
-    user = users[0]
-    should_update = False
-
-    if user.email != normalized_email:
-        user.email = normalized_email
-        should_update = True
-
-    if not auth_service.verify_password(password, user.password_hash):
-        user.password_hash = auth_service.hash_password(password)
-        should_update = True
-
-    if should_update:
-        db.commit()
-        db.refresh(user)
-
-    return user
+    return users[0]
 
 
 def update_user(db: Session, user_id: int, payload: UserUpdate) -> User:
