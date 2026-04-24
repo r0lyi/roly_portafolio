@@ -11,9 +11,14 @@ class Project(Base):
     id = Column(Integer, primary_key=True)
     title = Column(String(255), nullable=False)
     description = Column(Text)
-    image_url = Column(Text)
     demo_url = Column(Text)
     repo_url = Column(Text)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
 
     technologies = relationship("Technology", secondary=project_tech, back_populates="projects")
+    images = relationship(
+        "ProjectImage",
+        back_populates="project",
+        cascade="all, delete-orphan",
+        order_by="ProjectImage.position",
+    )
