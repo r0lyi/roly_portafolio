@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Response, status
 
-from app.api.dependencies import DBSession
+from app.api.dependencies import AdminUser, DBSession
 from app.schemas.experience import ExperienceCreate, ExperienceRead, ExperienceUpdate
 from app.services import experiences_service
 
@@ -17,16 +17,16 @@ def get_experience(experience_id: int, db: DBSession):
 
 
 @router.post("/", response_model=ExperienceRead, status_code=status.HTTP_201_CREATED)
-def create_experience(payload: ExperienceCreate, db: DBSession):
+def create_experience(payload: ExperienceCreate, db: DBSession, admin_user: AdminUser):
     return experiences_service.create_experience(db, payload)
 
 
 @router.patch("/{experience_id}", response_model=ExperienceRead)
-def update_experience(experience_id: int, payload: ExperienceUpdate, db: DBSession):
+def update_experience(experience_id: int, payload: ExperienceUpdate, db: DBSession, admin_user: AdminUser):
     return experiences_service.update_experience(db, experience_id, payload)
 
 
 @router.delete("/{experience_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_experience(experience_id: int, db: DBSession):
+def delete_experience(experience_id: int, db: DBSession, admin_user: AdminUser):
     experiences_service.delete_experience(db, experience_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

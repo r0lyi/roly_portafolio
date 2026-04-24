@@ -10,12 +10,12 @@ class UserBase(AppSchema):
 
 
 class UserCreate(UserBase):
-    password_hash: str
+    password: str = Field(..., min_length=8)
 
 
 class UserUpdate(AppSchema):
     email: str | None = Field(default=None, max_length=255)
-    password_hash: str | None = None
+    password: str | None = Field(default=None, min_length=8)
 
 
 class UserRead(UserBase):
