@@ -1,188 +1,163 @@
 import { useEffect, useState } from 'react'
-import { Inbox, LayoutGrid, LogOut, Sparkles, TimerReset } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import AdminAccountManager from '../../components/admin/AdminAccountManager.jsx'
+import AdminExperiencesManager from '../../components/admin/AdminExperiencesManager.jsx'
+import AdminOverviewSection from '../../components/admin/AdminOverviewSection.jsx'
+import AdminProjectImagesManager from '../../components/admin/AdminProjectImagesManager.jsx'
+import AdminProjectsManager from '../../components/admin/AdminProjectsManager.jsx'
+import AdminSidebar from '../../components/admin/AdminSidebar.jsx'
+import AdminTechnologiesManager from '../../components/admin/AdminTechnologiesManager.jsx'
+import AdminMessagesManager from '../../components/admin/AdminMessagesManager.jsx'
+import {
+  adminSections,
+  defaultAdminSectionId,
+  getAdminSectionById,
+} from '../../constants/adminSections.js'
 import useAuth from '../../hooks/useAuth.js'
 import useDocumentTitle from '../../hooks/useDocumentTitle.js'
 import { getContactMessages } from '../../services/api/contactMessages.js'
 import { getExperiences } from '../../services/api/experiences.js'
 import { getProjects } from '../../services/api/projects.js'
+import { getTechnologies } from '../../services/api/technologies.js'
+import { getUsers } from '../../services/api/users.js'
 import { getApiErrorMessage } from '../../utils/getApiErrorMessage.js'
 
 function AdminDashboardPage() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
-  const [dashboardState, setDashboardState] = useState({
+  const [searchParams, setSearchParams] = useSearchParams()
+  const requestedSectionId =
+    searchParams.get('section') ?? defaultAdminSectionId
+  const activeSection = getAdminSectionById(requestedSectionId)
+  const [overviewState, setOverviewState] = useState({
     isLoading: true,
     error: '',
     stats: {
       projects: 0,
+      projectImages: 0,
+      technologies: 0,
       experiences: 0,
       messages: 0,
+      users: 0,
     },
   })
 
-  useDocumentTitle('Admin Dashboard | Roly')
+  useDocumentTitle('Admin Console | Roly')
 
   useEffect(() => {
-    let isMounted = true
+    refreshOverview()
+  }, [])
 
-    async function loadDashboard() {
-      try {
-        const [projects, experiences, messages] = await Promise.all([
+  async function refreshOverview() {
+    setOverviewState((currentState) => ({
+      ...currentState,
+      isLoading: true,
+      error: '',
+    }))
+
+    try {
+      const [projects, technologies, experiences, messages, users] =
+        await Promise.all([
           getProjects(),
+          getTechnologies(),
           getExperiences(),
           getContactMessages(),
+          getUsers(),
         ])
 
-        if (!isMounted) {
-          return
-        }
-
-        setDashboardState({
-          isLoading: false,
-          error: '',
-          stats: {
-            projects: projects.length,
-            experiences: experiences.length,
-            messages: messages.length,
-          },
-        })
-      } catch (error) {
-        if (!isMounted) {
-          return
-        }
-
-        setDashboardState((currentState) => ({
-          ...currentState,
-          isLoading: false,
-          error: getApiErrorMessage(
-            error,
-            'No se pudieron cargar los datos del panel de administracion.',
+      setOverviewState({
+        isLoading: false,
+        error: '',
+        stats: {
+          projects: projects.length,
+          projectImages: projects.reduce(
+            (total, project) => total + project.images.length,
+            0,
           ),
-        }))
-      }
+          technologies: technologies.length,
+          experiences: experiences.length,
+          messages: messages.length,
+          users: users.length,
+        },
+      })
+    } catch (error) {
+      setOverviewState((currentState) => ({
+        ...currentState,
+        isLoading: false,
+        error: getApiErrorMessage(
+          error,
+          'No se pudieron cargar las metricas del panel de administracion.',
+        ),
+      }))
     }
+  }
 
-    loadDashboard()
-
-    return () => {
-      isMounted = false
-    }
-  }, [])
+  function handleSelectSection(sectionId) {
+    const nextSearchParams = new URLSearchParams(searchParams)
+    nextSearchParams.set('section', sectionId)
+    setSearchParams(nextSearchParams, { replace: true })
+  }
 
   function handleLogout() {
     logout()
     navigate('/admin/login', { replace: true })
   }
 
+  function renderActiveSection() {
+    switch (activeSection.id) {
+      case 'projects':
+        return <AdminProjectsManager onDataChange={refreshOverview} />
+      case 'project-images':
+        return <AdminProjectImagesManager onDataChange={refreshOverview} />
+      case 'technologies':
+        return <AdminTechnologiesManager onDataChange={refreshOverview} />
+      case 'experiences':
+        return <AdminExperiencesManager onDataChange={refreshOverview} />
+      case 'messages':
+        return <AdminMessagesManager onDataChange={refreshOverview} />
+      case 'account':
+        return <AdminAccountManager onDataChange={refreshOverview} />
+      case 'overview':
+      default:
+        return (
+          <AdminOverviewSection
+            isLoading={overviewState.isLoading}
+            stats={overviewState.stats}
+            error={overviewState.error}
+            onRefresh={refreshOverview}
+            onSelectSection={handleSelectSection}
+            userEmail={user?.email}
+          />
+        )
+    }
+  }
+
   return (
-    <section className="page-section admin-page">
-      <div className="admin-hero">
-        <div className="admin-copy">
-          <p className="eyebrow">Panel admin</p>
-          <h1>Sesion iniciada correctamente.</h1>
-          <p className="hero-summary">
-            Esta vista ya esta conectada a la autenticacion del backend usando
-            `axios` + `Basic Auth`.
-          </p>
+    <section className="page-section admin-page admin-console">
+      <div className="admin-console-shell">
+        <AdminSidebar
+          sections={adminSections}
+          activeSectionId={activeSection.id}
+          onSelectSection={handleSelectSection}
+          userEmail={user?.email}
+          onLogout={handleLogout}
+        />
 
-          <div className="admin-actions">
-            <button
-              type="button"
-              className="secondary-button"
-              onClick={() => navigate('/')}
-            >
-              Volver al inicio
-            </button>
+        <div className="admin-main">
+          <div className="admin-main-hero">
+            <p className="eyebrow">Base de datos y contenido</p>
+            <h1>Panel de administracion completo para el portfolio.</h1>
+            <p className="hero-summary">
+              Gestiona las tablas del proyecto desde una interfaz profesional,
+              usando directamente la API del backend y manteniendo la sesion del
+              administrador protegida.
+            </p>
+          </div>
 
-            <button
-              type="button"
-              className="auth-link auth-link-danger"
-              onClick={handleLogout}
-            >
-              <LogOut size={18} strokeWidth={2.2} />
-              <span>Cerrar sesion</span>
-            </button>
+          <div key={activeSection.id} className="admin-main-content">
+            {renderActiveSection()}
           </div>
         </div>
-
-        <div className="content-card admin-profile-card">
-          <p className="card-meta">Administrador autenticado</p>
-          <h3>{user?.email}</h3>
-          <p>
-            Tu sesion se valida contra <code>/api/auth/me</code> y se mantiene
-            en el navegador mientras dure la pestaña.
-          </p>
-        </div>
-      </div>
-
-      <div className="card-grid dashboard-card-grid">
-        <article className="content-card dashboard-stat-card">
-          <div className="stat-icon">
-            <LayoutGrid size={20} strokeWidth={2.2} />
-          </div>
-          <p className="card-meta">Proyectos</p>
-          <h3>
-            {dashboardState.isLoading ? '...' : dashboardState.stats.projects}
-          </h3>
-          <p>Elementos recuperados desde la API pública del portfolio.</p>
-        </article>
-
-        <article className="content-card dashboard-stat-card">
-          <div className="stat-icon">
-            <TimerReset size={20} strokeWidth={2.2} />
-          </div>
-          <p className="card-meta">Experiencias</p>
-          <h3>
-            {dashboardState.isLoading
-              ? '...'
-              : dashboardState.stats.experiences}
-          </h3>
-          <p>Datos listos para alimentar la seccion profesional.</p>
-        </article>
-
-        <article className="content-card dashboard-stat-card">
-          <div className="stat-icon">
-            <Inbox size={20} strokeWidth={2.2} />
-          </div>
-          <p className="card-meta">Mensajes</p>
-          <h3>
-            {dashboardState.isLoading ? '...' : dashboardState.stats.messages}
-          </h3>
-          <p>Consulta protegida por autenticacion de administrador.</p>
-        </article>
-      </div>
-
-      <div className="card-grid dashboard-card-grid">
-        <article className="content-card">
-          <p className="card-meta">Estado de integracion</p>
-          <h3>Frontend y backend ya hablan el mismo idioma.</h3>
-          <p>
-            El cliente `axios` usa el header `Authorization` de forma
-            transparente en las peticiones autenticadas.
-          </p>
-        </article>
-
-        <article className="content-card">
-          <p className="card-meta">Proximo paso sugerido</p>
-          <h3>Crear modulos CRUD para el panel.</h3>
-          <p>
-            La base ya esta lista para que agregues gestion de proyectos,
-            experiencias y mensajes desde vistas separadas.
-          </p>
-        </article>
-
-        <article className="content-card">
-          <div className="stat-icon">
-            <Sparkles size={20} strokeWidth={2.2} />
-          </div>
-          <p className="card-meta">Estado del panel</p>
-          <h3>{dashboardState.error ? 'Revision pendiente' : 'Operativo'}</h3>
-          <p>
-            {dashboardState.error ||
-              'Las metricas basicas del dashboard se cargaron correctamente.'}
-          </p>
-        </article>
       </div>
     </section>
   )
