@@ -143,8 +143,17 @@ code {
   gap: 10px;
 }
 
+.header-actions,
+.auth-actions,
+.admin-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .nav-link,
-.secondary-button {
+.secondary-button,
+.auth-link {
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.72);
   color: var(--text-strong);
@@ -152,7 +161,8 @@ code {
 
 .nav-link,
 .primary-button,
-.secondary-button {
+.secondary-button,
+.auth-link {
   padding: 0.82rem 1.1rem;
   border-radius: 999px;
   transition:
@@ -165,6 +175,7 @@ code {
 .nav-link:hover,
 .primary-button:hover,
 .secondary-button:hover,
+.auth-link:hover,
 .brand:hover {
   transform: translateY(-1px);
 }
@@ -177,9 +188,23 @@ code {
 }
 
 .secondary-button:hover,
-.nav-link:hover {
+.nav-link:hover,
+.auth-link:hover {
   border-color: rgba(17, 32, 41, 0.18);
   background: rgba(255, 255, 255, 0.94);
+}
+
+.auth-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.auth-link-danger {
+  border-color: rgba(159, 79, 52, 0.24);
+  background: rgba(197, 107, 77, 0.12);
+  color: var(--accent-strong);
 }
 
 .page-shell {
@@ -199,6 +224,19 @@ code {
   grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.9fr);
   gap: 34px;
   align-items: center;
+}
+
+.auth-page,
+.admin-page {
+  min-height: 72vh;
+}
+
+.auth-layout,
+.admin-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  gap: 24px;
+  align-items: start;
 }
 
 .eyebrow {
@@ -246,7 +284,8 @@ li {
 .section-heading p:last-child,
 .content-card p,
 .contact-copy,
-.contact-helper {
+.contact-helper,
+.auth-form-card p {
   color: var(--muted);
 }
 
@@ -287,7 +326,8 @@ li {
 
 .hero-image-frame,
 .content-card,
-.contact-panel {
+.contact-panel,
+.auth-form-card {
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   background: var(--surface);
@@ -339,8 +379,119 @@ li {
 }
 
 .content-card,
-.contact-panel {
+.contact-panel,
+.auth-form-card {
   padding: 24px;
+}
+
+.auth-form-card h2 {
+  margin-top: 10px;
+}
+
+.auth-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.form-field {
+  display: grid;
+  gap: 10px;
+}
+
+.form-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-strong);
+  font-weight: 700;
+}
+
+.form-field input {
+  width: 100%;
+  padding: 0.95rem 1rem;
+  border: 1px solid rgba(17, 32, 41, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text-strong);
+  outline: none;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.form-field input:focus {
+  border-color: rgba(159, 79, 52, 0.35);
+  box-shadow: 0 0 0 4px rgba(197, 107, 77, 0.12);
+}
+
+.form-message {
+  margin: 18px 0 0;
+  padding: 0.95rem 1rem;
+  border-radius: 18px;
+}
+
+.form-warning {
+  border: 1px solid rgba(180, 129, 61, 0.18);
+  background: rgba(221, 180, 87, 0.16);
+  color: #7c5b1c;
+}
+
+.form-error {
+  border: 1px solid rgba(176, 74, 74, 0.18);
+  background: rgba(214, 94, 94, 0.12);
+  color: #9a3a3a;
+}
+
+.auth-submit {
+  width: 100%;
+  justify-content: center;
+}
+
+.auth-submit:disabled {
+  cursor: wait;
+  opacity: 0.75;
+}
+
+.auth-feature-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.auth-feature-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.admin-profile-card {
+  min-height: 100%;
+}
+
+.dashboard-card-grid {
+  margin-top: 18px;
+}
+
+.dashboard-stat-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 18px;
+  border-radius: 14px;
+  background: rgba(197, 107, 77, 0.12);
+  color: var(--accent-strong);
+}
+
+.route-state-card {
+  max-width: 520px;
 }
 
 .card-meta,
@@ -394,9 +545,19 @@ li {
     align-items: flex-start;
   }
 
+  .header-actions,
+  .auth-actions,
+  .auth-layout,
+  .admin-hero,
   .hero-section,
   .card-grid {
     grid-template-columns: 1fr;
+  }
+
+  .header-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   h1,
@@ -412,13 +573,16 @@ li {
 
   .site-nav,
   .hero-actions,
-  .hero-meta {
+  .hero-meta,
+  .auth-actions,
+  .admin-actions {
     width: 100%;
   }
 
   .nav-link,
   .primary-button,
   .secondary-button,
+  .auth-link,
   .contact-link {
     width: 100%;
     justify-content: center;

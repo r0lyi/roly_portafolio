@@ -37,6 +37,45 @@ def create_user(db: Session, payload: UserCreate) -> User:
     return user
 
 
+def ensure_default_admin(db: Session, *, email: str, password: str) -> User:
+    normalized_email = email.strip().lower()
+    stmt = select(User).order_by(User.created_at.asc(), User.id.asc())
+    users = db.scalars(stmt).all()
+
+    if len(users) > 1:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="More than one admin user is configured",
+        )
+
+    if not users:
+        user = User(
+            email=normalized_email,
+            password_hash=auth_service.hash_password(password),
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        return user
+
+    user = users[0]
+    should_update = False
+
+    if user.email != normalized_email:
+        user.email = normalized_email
+        should_update = True
+
+    if not auth_service.verify_password(password, user.password_hash):
+        user.password_hash = auth_service.hash_password(password)
+        should_update = True
+
+    if should_update:
+        db.commit()
+        db.refresh(user)
+
+    return user
+
+
 def update_user(db: Session, user_id: int, payload: UserUpdate) -> User:
     user = get_user_or_404(db, user_id)
     update_data = payload.model_dump(exclude_unset=True)
