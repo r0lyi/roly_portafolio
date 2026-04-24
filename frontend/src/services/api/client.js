@@ -1,9 +1,20 @@
 import axios from 'axios'
+import { getStoredAdminAuthHeader } from '../../utils/adminSession.js'
 
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:8000/api',
+  baseURL: import.meta.env.VITE_API_URL ?? '/api',
   headers: {
     'Content-Type': 'application/json',
   },
   timeout: 10000,
+})
+
+apiClient.interceptors.request.use((config) => {
+  const storedAuthHeader = getStoredAdminAuthHeader()
+
+  if (storedAuthHeader && !config.headers.Authorization) {
+    config.headers.Authorization = storedAuthHeader
+  }
+
+  return config
 })

@@ -1,7 +1,14 @@
+import os
+
 from sqlalchemy import inspect, text
 
 from app.database.base import Base
 from app.database.connection import engine
+from app.database.session import SessionLocal
+from app.services import users_service
+
+DEFAULT_ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "rolysilvestre2@gmail.com")
+DEFAULT_ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "WEB%rsg2005")
 
 
 def init_db() -> None:
@@ -9,6 +16,7 @@ def init_db() -> None:
     Base.metadata.create_all(bind=engine)
     _migrate_project_images()
     _migrate_users_table()
+    _ensure_default_admin()
 
 
 def _load_models() -> None:
@@ -81,3 +89,16 @@ def _migrate_users_table() -> None:
                 connection.execute(
                     text(f'ALTER TABLE users ALTER COLUMN "{column_name}" SET DEFAULT FALSE')
                 )
+
+
+def _ensure_default_admin() -> None:
+    db = SessionLocal()
+
+    try:
+        users_service.ensure_default_admin(
+            db,
+            email=DEFAULT_ADMIN_EMAIL,
+            password=DEFAULT_ADMIN_PASSWORD,
+        )
+    finally:
+        db.close()
