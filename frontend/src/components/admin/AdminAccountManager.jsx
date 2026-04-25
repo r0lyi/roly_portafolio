@@ -6,6 +6,28 @@ import { formatAdminDateTime } from '../../utils/formatAdminValue.js'
 import { getApiErrorMessage } from '../../utils/getApiErrorMessage.js'
 import AdminSectionHeader from './AdminSectionHeader.jsx'
 import AdminStatusBanner from './AdminStatusBanner.jsx'
+import {
+  adminEmptyStateClass,
+  adminFormActionsClass,
+  adminFormClass,
+  adminModuleClass,
+  adminPanelClass,
+  adminPanelHeadingClass,
+  adminPanelHeadingMetaClass,
+  adminRecordCardClass,
+  adminRecordListClass,
+  adminRecordMainClass,
+  adminRecordMetaClass,
+  adminRecordSummaryClass,
+  adminResourceGridClass,
+  cardBodyClass,
+  cardMetaClass,
+  dangerButtonClass,
+  formFieldClass,
+  formLabelClass,
+  primaryButtonClass,
+  textInputClass,
+} from '../../styles/tailwindClasses.js'
 
 const initialFormData = {
   email: '',
@@ -177,7 +199,7 @@ function AdminAccountManager({ onDataChange }) {
   const selectedUser = users.find((item) => item.id === selectedUserId) ?? null
 
   return (
-    <section className="admin-module">
+    <section className={adminModuleClass}>
       <AdminSectionHeader
         eyebrow="Cuenta administradora"
         title="Gestion de la tabla users con politica de un solo admin."
@@ -187,36 +209,36 @@ function AdminAccountManager({ onDataChange }) {
       <AdminStatusBanner type="error" message={viewState.error} />
       <AdminStatusBanner type="success" message={viewState.success} />
 
-      <div className="admin-resource-grid">
-        <div className="admin-resource-panel">
-          <div className="admin-panel-heading">
+      <div className={adminResourceGridClass}>
+        <div className={adminPanelClass}>
+          <div className={adminPanelHeadingClass}>
             <h3>Cuenta actual</h3>
-            <span>{viewState.isLoading ? 'Cargando...' : users.length}</span>
+            <span className={adminPanelHeadingMetaClass}>
+              {viewState.isLoading ? 'Cargando...' : users.length}
+            </span>
           </div>
 
           {users.length === 0 && !viewState.isLoading ? (
-            <div className="admin-empty-state">
-              <p>
+            <div className={adminEmptyStateClass}>
+              <p className="m-0">
                 No hay administrador activo. Reinicia el backend para restaurar
                 el admin por defecto.
               </p>
             </div>
           ) : (
-            <div className="admin-record-list">
+            <div className={adminRecordListClass}>
               {users.map((account) => (
                 <button
                   key={account.id}
                   type="button"
-                  className={`admin-record-card${
-                    selectedUserId === account.id ? ' admin-record-card-active' : ''
-                  }`}
+                  className={adminRecordCardClass(selectedUserId === account.id)}
                   onClick={() => startEditing(account)}
                 >
-                  <div className="admin-record-main">
+                  <div className={adminRecordMainClass}>
                     <strong>{account.email}</strong>
-                    <p>Administrador del sistema</p>
+                    <p className={adminRecordSummaryClass}>Administrador del sistema</p>
                   </div>
-                  <div className="admin-record-meta">
+                  <div className={adminRecordMetaClass}>
                     <span>ID #{account.id}</span>
                     <span>Creado: {formatAdminDateTime(account.created_at)}</span>
                   </div>
@@ -231,17 +253,20 @@ function AdminAccountManager({ onDataChange }) {
           />
         </div>
 
-        <div className="admin-resource-panel">
-          <div className="admin-panel-heading">
+        <div className={adminPanelClass}>
+          <div className={adminPanelHeadingClass}>
             <h3>Ajustes del admin</h3>
-            {selectedUser ? <span>ID #{selectedUser.id}</span> : null}
+            {selectedUser ? (
+              <span className={adminPanelHeadingMetaClass}>ID #{selectedUser.id}</span>
+            ) : null}
           </div>
 
-          <form className="admin-form" onSubmit={handleSubmit}>
-            <label className="form-field" htmlFor="admin-email">
-              <span className="form-label">Email</span>
+          <form className={adminFormClass} onSubmit={handleSubmit}>
+            <label className={formFieldClass} htmlFor="admin-email">
+              <span className={formLabelClass}>Email</span>
               <input
                 id="admin-email"
+                className={textInputClass}
                 name="email"
                 type="email"
                 value={formData.email}
@@ -251,10 +276,11 @@ function AdminAccountManager({ onDataChange }) {
               />
             </label>
 
-            <label className="form-field" htmlFor="admin-password">
-              <span className="form-label">Nueva contrasena</span>
+            <label className={formFieldClass} htmlFor="admin-password">
+              <span className={formLabelClass}>Nueva contrasena</span>
               <input
                 id="admin-password"
+                className={textInputClass}
                 name="password"
                 type="password"
                 value={formData.password}
@@ -264,33 +290,35 @@ function AdminAccountManager({ onDataChange }) {
               />
             </label>
 
-            <div className="admin-note-card">
-              <p className="card-meta">Nota operativa</p>
-              <p>
+            <div className="mt-2 grid gap-3 rounded-[32px] border border-[rgba(21,39,48,0.12)] bg-[rgba(255,255,255,0.76)] p-6 backdrop-blur-[16px]">
+              <p className={cardMetaClass}>Nota operativa</p>
+              <p className={cardBodyClass}>
                 Si cambias email o contrasena, el panel cerrara la sesion
                 actual para volver a autenticarse con las nuevas credenciales.
               </p>
             </div>
 
-            <div className="admin-form-actions">
-              <button type="submit" className="primary-button">
+            <div className={adminFormActionsClass}>
+              <button type="submit" className={primaryButtonClass}>
                 Guardar cuenta
               </button>
             </div>
           </form>
 
           {selectedUser ? (
-            <div className="admin-danger-zone">
-              <p className="card-meta">Zona de riesgo</p>
-              <h3>Eliminar administrador actual</h3>
-              <p>
+            <div className="mt-2 grid gap-[10px] rounded-[32px] border border-[rgba(21,39,48,0.12)] bg-[rgba(197,107,77,0.08)] p-6">
+              <p className={cardMetaClass}>Zona de riesgo</p>
+              <h3 className="m-0 text-[1.18rem] font-semibold text-[#112029]">
+                Eliminar administrador actual
+              </h3>
+              <p className={cardBodyClass}>
                 Esta accion te sacara del panel. Para restaurar el acceso
                 deberas reiniciar el backend y dejar que recree el admin por
                 defecto si la tabla queda vacia.
               </p>
               <button
                 type="button"
-                className="auth-link auth-link-danger"
+                className={dangerButtonClass}
                 onClick={handleDelete}
               >
                 Eliminar admin

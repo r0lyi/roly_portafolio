@@ -4,6 +4,7 @@ import ContactSection from '../../sections/home/ContactSection.jsx'
 import ExperienceSection from '../../sections/home/ExperienceSection.jsx'
 import HeroSection from '../../sections/home/HeroSection.jsx'
 import ProjectsSection from '../../sections/home/ProjectsSection.jsx'
+import SkillsSection from '../../sections/home/SkillsSection.jsx'
 
 function HomePage() {
   useDocumentTitle('Roly | Portafolio')
@@ -12,8 +13,9 @@ function HomePage() {
     <>
       <HeroSection />
       <AboutSection />
-      <ProjectsSection />
       <ExperienceSection />
+      <ProjectsSection />
+      <SkillsSection />
       <ContactSection />
     </>
   )

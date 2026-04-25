@@ -10,6 +10,34 @@ import {
 } from '../../services/api/projects.js'
 import { createExcerpt } from '../../utils/formatAdminValue.js'
 import { getApiErrorMessage } from '../../utils/getApiErrorMessage.js'
+import {
+  adminEmptyStateClass,
+  adminFormActionsClass,
+  adminFormClass,
+  adminImagePreviewClass,
+  adminModuleClass,
+  adminPanelClass,
+  adminPanelHeadingClass,
+  adminPanelHeadingMetaClass,
+  adminProjectSwitchClass,
+  adminProjectSwitcherClass,
+  adminRecordCardClass,
+  adminRecordListClass,
+  adminRecordMainClass,
+  adminRecordMetaClass,
+  adminRecordSummaryClass,
+  adminResourceGridClass,
+  dangerButtonClass,
+  formFieldClass,
+  formLabelClass,
+  primaryButtonClass,
+  secondaryButtonClass,
+  textInputClass,
+} from '../../styles/tailwindClasses.js'
+import {
+  normalizeImageAssetPath,
+  resolveImageAssetUrl,
+} from '../../utils/resolveImageAssetUrl.js'
 
 const initialFormData = {
   image_url: '',
@@ -18,7 +46,7 @@ const initialFormData = {
 
 function mapImageToForm(image) {
   return {
-    image_url: image.image_url ?? '',
+    image_url: normalizeImageAssetPath(image.image_url ?? ''),
     position:
       image.position === null || image.position === undefined
         ? '0'
@@ -170,7 +198,7 @@ function AdminProjectImagesManager({ onDataChange }) {
     if (!formData.image_url.trim()) {
       setViewState((currentState) => ({
         ...currentState,
-        error: 'La URL de la imagen es obligatoria.',
+        error: 'La ruta de la imagen es obligatoria.',
         success: '',
       }))
       return
@@ -178,7 +206,7 @@ function AdminProjectImagesManager({ onDataChange }) {
 
     try {
       const payload = {
-        image_url: formData.image_url.trim(),
+        image_url: normalizeImageAssetPath(formData.image_url),
         position:
           formData.position === '' || Number.isNaN(Number(formData.position))
             ? 0
@@ -241,7 +269,7 @@ function AdminProjectImagesManager({ onDataChange }) {
     projects.find((project) => project.id === selectedProjectId) ?? null
 
   return (
-    <section className="admin-module">
+    <section className={adminModuleClass}>
       <AdminSectionHeader
         eyebrow="Tabla project_image"
         title="Gestion puntual de imagenes ligadas a proyectos."
@@ -252,8 +280,8 @@ function AdminProjectImagesManager({ onDataChange }) {
       <AdminStatusBanner type="success" message={viewState.success} />
 
       {projects.length === 0 && !viewState.isLoading ? (
-        <div className="admin-empty-state admin-empty-state-large">
-          <p>
+        <div className={`${adminEmptyStateClass} mt-3`}>
+          <p className="m-0">
             Todavia no existen proyectos. Crea uno en el modulo de proyectos
             antes de gestionar sus imagenes.
           </p>
@@ -261,14 +289,12 @@ function AdminProjectImagesManager({ onDataChange }) {
       ) : null}
 
       {projects.length > 0 ? (
-        <div className="admin-project-switcher">
+        <div className={adminProjectSwitcherClass}>
           {projects.map((project) => (
             <button
               key={project.id}
               type="button"
-              className={`admin-project-switch${
-                selectedProjectId === project.id ? ' admin-project-switch-active' : ''
-              }`}
+              className={adminProjectSwitchClass(selectedProjectId === project.id)}
               onClick={() => handleProjectSelection(project.id)}
             >
               {project.title}
@@ -278,67 +304,77 @@ function AdminProjectImagesManager({ onDataChange }) {
       ) : null}
 
       {selectedProject ? (
-        <div className="admin-resource-grid">
-          <div className="admin-resource-panel">
-            <div className="admin-panel-heading">
+        <div className={adminResourceGridClass}>
+          <div className={adminPanelClass}>
+            <div className={adminPanelHeadingClass}>
               <h3>Imagenes de {selectedProject.title}</h3>
-              <span>{viewState.isLoading ? 'Cargando...' : images.length}</span>
+              <span className={adminPanelHeadingMetaClass}>
+                {viewState.isLoading ? 'Cargando...' : images.length}
+              </span>
             </div>
 
             {images.length === 0 && !viewState.isLoading ? (
-              <div className="admin-empty-state">
-                <p>Este proyecto todavia no tiene imagenes registradas.</p>
+              <div className={adminEmptyStateClass}>
+                <p className="m-0">Este proyecto todavia no tiene imagenes registradas.</p>
               </div>
             ) : (
-              <div className="admin-record-list">
+              <div className={adminRecordListClass}>
                 {images.map((image) => (
                   <button
                     key={image.id}
                     type="button"
-                    className={`admin-record-card${
-                      selectedImageId === image.id ? ' admin-record-card-active' : ''
-                    }`}
+                    className={adminRecordCardClass(selectedImageId === image.id)}
                     onClick={() => startEditing(image)}
                   >
-                    <div className="admin-image-preview">
-                      <img src={image.image_url} alt="" />
+                    <div className={adminImagePreviewClass}>
+                      <img src={resolveImageAssetUrl(image.image_url)} alt="" />
                     </div>
-                    <div className="admin-record-main">
+                    <div className={adminRecordMainClass}>
                       <strong>Imagen #{image.id}</strong>
-                      <p>{createExcerpt(image.image_url, 60)}</p>
+                      <p className={adminRecordSummaryClass}>
+                        {createExcerpt(normalizeImageAssetPath(image.image_url), 60)}
+                      </p>
                     </div>
-                    <div className="admin-record-meta">
+                    <div className={adminRecordMetaClass}>
                       <span>Posicion: {image.position}</span>
                     </div>
                   </button>
                 ))}
               </div>
-            )}
-          </div>
+          )}
+        </div>
 
-          <div className="admin-resource-panel">
-            <div className="admin-panel-heading">
+          <div className={adminPanelClass}>
+            <div className={adminPanelHeadingClass}>
               <h3>{selectedImageId ? 'Editar imagen' : 'Nueva imagen'}</h3>
-              {selectedImageId ? <span>ID #{selectedImageId}</span> : null}
+              {selectedImageId ? (
+                <span className={adminPanelHeadingMetaClass}>ID #{selectedImageId}</span>
+              ) : null}
             </div>
 
-            <form className="admin-form" onSubmit={handleSubmit}>
-              <label className="form-field" htmlFor="project-image-url">
-                <span className="form-label">URL de imagen</span>
+            <form className={adminFormClass} onSubmit={handleSubmit}>
+              <label className={formFieldClass} htmlFor="project-image-url">
+                <span className={formLabelClass}>Ruta de imagen</span>
                 <input
                   id="project-image-url"
+                  className={textInputClass}
                   name="image_url"
                   value={formData.image_url}
                   onChange={handleChange}
-                  placeholder="https://..."
+                  placeholder="proyectos/mi-captura.webp"
                   required
                 />
+                <span className="text-xs leading-5 text-[#5f7881]">
+                  Guarda la imagen en `frontend/public/img` y escribe el nombre,
+                  `img/...`, `public/img/...` o `/img/...`.
+                </span>
               </label>
 
-              <label className="form-field" htmlFor="project-image-position">
-                <span className="form-label">Posicion</span>
+              <label className={formFieldClass} htmlFor="project-image-position">
+                <span className={formLabelClass}>Posicion</span>
                 <input
                   id="project-image-position"
+                  className={textInputClass}
                   name="position"
                   type="number"
                   value={formData.position}
@@ -347,14 +383,14 @@ function AdminProjectImagesManager({ onDataChange }) {
                 />
               </label>
 
-              <div className="admin-form-actions">
-                <button type="submit" className="primary-button">
+              <div className={adminFormActionsClass}>
+                <button type="submit" className={primaryButtonClass}>
                   {selectedImageId ? 'Guardar cambios' : 'Crear imagen'}
                 </button>
 
                 <button
                   type="button"
-                  className="secondary-button"
+                  className={secondaryButtonClass}
                   onClick={handleCreateNew}
                 >
                   Nueva fila
@@ -363,7 +399,7 @@ function AdminProjectImagesManager({ onDataChange }) {
                 {selectedImageId ? (
                   <button
                     type="button"
-                    className="auth-link auth-link-danger"
+                    className={dangerButtonClass}
                     onClick={handleDelete}
                   >
                     Eliminar

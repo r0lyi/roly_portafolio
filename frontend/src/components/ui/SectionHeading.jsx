@@ -1,9 +1,15 @@
+import {
+  adminSectionDescriptionClass,
+  eyebrowClass,
+  sectionHeadingClass,
+} from '../../styles/tailwindClasses.js'
+
 function SectionHeading({ eyebrow, title, description }) {
   return (
-    <div className="section-heading">
-      <p className="eyebrow">{eyebrow}</p>
-      <h2>{title}</h2>
-      <p>{description}</p>
+    <div className="grid gap-4">
+      <p className={eyebrowClass}>{eyebrow}</p>
+      <h2 className={sectionHeadingClass}>{title}</h2>
+      <p className={adminSectionDescriptionClass}>{description}</p>
     </div>
   )
 }

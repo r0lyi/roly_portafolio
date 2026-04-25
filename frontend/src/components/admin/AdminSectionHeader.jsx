@@ -1,13 +1,22 @@
+import {
+  adminSectionActionsClass,
+  adminSectionCopyClass,
+  adminSectionDescriptionClass,
+  adminSectionHeaderClass,
+  eyebrowClass,
+  sectionHeadingClass,
+} from '../../styles/tailwindClasses.js'
+
 function AdminSectionHeader({ eyebrow, title, description, actions }) {
   return (
-    <div className="admin-section-header">
-      <div className="admin-section-copy">
-        {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
-        <h2>{title}</h2>
-        <p>{description}</p>
+    <div className={adminSectionHeaderClass}>
+      <div className={adminSectionCopyClass}>
+        {eyebrow ? <p className={eyebrowClass}>{eyebrow}</p> : null}
+        <h2 className={sectionHeadingClass}>{title}</h2>
+        <p className={adminSectionDescriptionClass}>{description}</p>
       </div>
 
-      {actions ? <div className="admin-section-actions">{actions}</div> : null}
+      {actions ? <div className={adminSectionActionsClass}>{actions}</div> : null}
     </div>
   )
 }

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import quoted_name
 
@@ -11,6 +11,7 @@ class Technology(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
+    img_url = Column(Text)
     group = Column(quoted_name("group", True), String(100))
     order = Column(quoted_name("order", True), Integer)
 
