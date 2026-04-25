@@ -20,8 +20,6 @@ import {
   adminRecordMetaClass,
   adminRecordSummaryClass,
   adminResourceGridClass,
-  cardBodyClass,
-  cardMetaClass,
   dangerButtonClass,
   formFieldClass,
   formLabelClass,
@@ -290,9 +288,11 @@ function AdminAccountManager({ onDataChange }) {
               />
             </label>
 
-            <div className="mt-2 grid gap-3 rounded-[32px] border border-[rgba(21,39,48,0.12)] bg-[rgba(255,255,255,0.76)] p-6 backdrop-blur-[16px]">
-              <p className={cardMetaClass}>Nota operativa</p>
-              <p className={cardBodyClass}>
+            <div className="mt-2 grid gap-3 border-[3px] border-[#101010] bg-[#f2f0e8] p-6">
+              <p className="m-0 text-[0.76rem] font-black uppercase tracking-[0.1em] text-[#101010]">
+                Nota operativa
+              </p>
+              <p className="m-0 text-[0.98rem] font-bold leading-[1.6] text-[#323232]">
                 Si cambias email o contrasena, el panel cerrara la sesion
                 actual para volver a autenticarse con las nuevas credenciales.
               </p>
@@ -306,12 +306,14 @@ function AdminAccountManager({ onDataChange }) {
           </form>
 
           {selectedUser ? (
-            <div className="mt-2 grid gap-[10px] rounded-[32px] border border-[rgba(21,39,48,0.12)] bg-[rgba(197,107,77,0.08)] p-6">
-              <p className={cardMetaClass}>Zona de riesgo</p>
-              <h3 className="m-0 text-[1.18rem] font-semibold text-[#112029]">
+            <div className="mt-2 grid gap-[10px] border-[3px] border-[#101010] bg-[#ffb0a6] p-6">
+              <p className="m-0 text-[0.76rem] font-black uppercase tracking-[0.1em] text-[#101010]">
+                Zona de riesgo
+              </p>
+              <h3 className="m-0 font-['Manrope'] text-[1.4rem] font-extrabold uppercase leading-[0.95] tracking-[-0.04em] text-[#101010]">
                 Eliminar administrador actual
               </h3>
-              <p className={cardBodyClass}>
+              <p className="m-0 text-[0.98rem] font-bold leading-[1.6] text-[#323232]">
                 Esta accion te sacara del panel. Para restaurar el acceso
                 deberas reiniciar el backend y dejar que recree el admin por
                 defecto si la tabla queda vacia.

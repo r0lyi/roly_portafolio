@@ -5,22 +5,18 @@ import useAuth from '../../hooks/useAuth.js'
 import useDocumentTitle from '../../hooks/useDocumentTitle.js'
 import { getAuthStatus } from '../../services/api/auth.js'
 import {
-  cardBodyClass,
-  cardMetaClass,
-  cardTitleClass,
-  contentCardClass,
-  displayHeadingClass,
-  eyebrowClass,
+  adminDisplayHeadingClass,
+  adminEyebrowClass,
+  adminSummaryClass,
   formFieldClass,
   formLabelClass,
   formMessageClass,
-  heroSummaryClass,
-  pageSectionClass,
-  primaryButtonClass,
-  sectionHeadingClass,
   textInputClass,
 } from '../../styles/tailwindClasses.js'
 import { getApiErrorMessage } from '../../utils/getApiErrorMessage.js'
+
+const loginSubmitButtonClass =
+  'inline-flex w-full items-center justify-center gap-2.5 border-[3px] border-[#101010] bg-white px-[1.05rem] py-[0.92rem] text-[0.8rem] font-black uppercase tracking-[0.05em] text-[#101010] shadow-[4px_4px_0_#101010] transition duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[#18ff48] hover:shadow-[6px_6px_0_#101010] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:cursor-not-allowed disabled:opacity-70'
 
 function LoginPage() {
   const { isAuthenticated, isLoading, login } = useAuth()
@@ -118,42 +114,74 @@ function LoginPage() {
   }
 
   return (
-    <section className={`${pageSectionClass} min-h-[72vh]`}>
-      <div className="grid items-start gap-6 [grid-template-columns:minmax(0,1.05fr)_minmax(320px,0.95fr)] max-[960px]:grid-cols-1">
-        <div>
-          <p className={eyebrowClass}>Acceso administrador</p>
-          <h1 className={displayHeadingClass}>Inicia sesion para entrar al dashboard.</h1>
-          <p className={`mt-6 ${heroSummaryClass}`}>
-            El formulario valida el email y la contrasena usando la logica
-            existente del backend.
-          </p>
+    <section className="grid gap-6">
+      <div className="grid items-start gap-6 [grid-template-columns:minmax(0,1.08fr)_minmax(340px,0.92fr)] max-[960px]:grid-cols-1">
+        <div className="grid gap-6">
+          <div className="relative overflow-hidden border-[4px] border-[#101010] bg-[#fffef8] p-[clamp(22px,4vw,40px)] shadow-[10px_10px_0_rgba(16,16,16,0.16)]">
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute right-4 top-4 hidden border-[3px] border-[#101010] bg-[#18ff48] px-3 py-2 text-[0.76rem] font-black uppercase tracking-[0.08em] text-[#101010] lg:inline-flex"
+            >
+              Secure access
+            </span>
+            <p className={adminEyebrowClass}>Acceso administrador</p>
+            <h1 className={`mt-5 ${adminDisplayHeadingClass} max-[960px]:max-w-none`}>
+              Entra al panel y controla el portfolio.
+            </h1>
+            <p className={`mt-5 ${adminSummaryClass}`}>
+              El formulario valida el email y la contrasena contra el backend
+              real para proteger el dashboard y mantener la sesion del admin
+              bajo control.
+            </p>
+          </div>
 
-          <div className="mt-6 grid gap-[14px]">
-            <div className={`${contentCardClass} grid grid-cols-[auto_1fr] items-start gap-[14px]`}>
-              <ShieldCheck size={20} strokeWidth={2.2} />
-              <div>
-                <h3 className={cardTitleClass}>Autenticacion real</h3>
-                <p className={cardBodyClass}>
-                  El acceso se comprueba contra <code>/api/auth/me</code>.
+          <div className="grid gap-4 md:grid-cols-2">
+            <article className="grid gap-3 border-[4px] border-[#101010] bg-white p-5 shadow-[8px_8px_0_rgba(16,16,16,0.14)]">
+              <span className="grid h-12 w-12 place-items-center border-[3px] border-[#101010] bg-[#ffde59] text-[#101010]">
+                <ShieldCheck size={22} strokeWidth={2.4} />
+              </span>
+              <div className="grid gap-2">
+                <h2 className="m-0 font-['Manrope'] text-[1.45rem] font-extrabold uppercase leading-[0.95] tracking-[-0.05em] text-[#101010]">
+                  Auth real
+                </h2>
+                <p className="m-0 text-[0.98rem] font-bold leading-[1.6] text-[#323232]">
+                  El acceso se comprueba contra <code>/api/auth/me</code> y
+                  respeta la logica actual del backend.
                 </p>
               </div>
-            </div>
+            </article>
 
-            <div className={`${contentCardClass} grid grid-cols-[auto_1fr] items-start gap-[14px]`}>
-              <LogIn size={20} strokeWidth={2.2} />
-              <div>
-                <h3 className={cardTitleClass}>Sesion de admin</h3>
-                <p className={cardBodyClass}>
-                  La sesion se conserva en la pestana para proteger el panel.
+            <article className="grid gap-3 border-[4px] border-[#101010] bg-[#f2f0e8] p-5 shadow-[8px_8px_0_rgba(16,16,16,0.14)]">
+              <span className="grid h-12 w-12 place-items-center border-[3px] border-[#101010] bg-[#18ff48] text-[#101010]">
+                <LogIn size={22} strokeWidth={2.4} />
+              </span>
+              <div className="grid gap-2">
+                <h2 className="m-0 font-['Manrope'] text-[1.45rem] font-extrabold uppercase leading-[0.95] tracking-[-0.05em] text-[#101010]">
+                  Sesion segura
+                </h2>
+                <p className="m-0 text-[0.98rem] font-bold leading-[1.6] text-[#323232]">
+                  La sesion se conserva en la pestana y mantiene protegido todo
+                  el panel de administracion.
                 </p>
               </div>
-            </div>
+            </article>
           </div>
         </div>
 
-        <div className={contentCardClass}>
-          <p className={cardMetaClass}>Login</p>
-          <h2 className={`mt-[10px] ${sectionHeadingClass}`}>Panel de administracion</h2>
+        <div className="border-[4px] border-[#101010] bg-white p-6 shadow-[10px_10px_0_rgba(16,16,16,0.16)]">
+          <div className="flex items-start justify-between gap-4 border-b-[4px] border-[#101010] pb-5">
+            <div>
+              <p className="m-0 text-[0.76rem] font-black uppercase tracking-[0.1em] text-[#101010]">
+                Login
+              </p>
+              <h2 className="mt-3 font-['Manrope'] text-[clamp(2rem,5vw,3rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.06em] text-[#101010]">
+                Panel admin
+              </h2>
+            </div>
+            <span className="border-[3px] border-[#101010] bg-[#ffde59] px-3 py-2 text-[0.74rem] font-black uppercase tracking-[0.08em] text-[#101010]">
+              Auth gate
+            </span>
+          </div>
 
           {!pageState.isCheckingStatus && !pageState.adminConfigured ? (
             <p className={`mt-[18px] ${formMessageClass('warning')}`}>
@@ -206,11 +234,16 @@ function LoginPage() {
 
             <button
               type="submit"
-              className={`${primaryButtonClass} w-full justify-center`}
+              className={loginSubmitButtonClass}
               disabled={isLoading || pageState.isSubmitting}
             >
               {pageState.isSubmitting ? 'Entrando...' : 'Iniciar sesion'}
             </button>
+
+            <p className="m-0 text-[0.84rem] font-bold leading-[1.6] text-[#3a3a3a]">
+              Solo el usuario administrador configurado en backend puede cruzar
+              esta puerta.
+            </p>
           </form>
         </div>
       </div>

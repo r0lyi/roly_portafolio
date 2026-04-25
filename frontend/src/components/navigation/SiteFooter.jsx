@@ -7,8 +7,8 @@ function SiteFooter() {
 
   if (!isHomePage) {
     return (
-      <footer className="flex items-center justify-center gap-6 border-t border-[rgba(21,39,48,0.12)] px-7 py-5 text-center text-[0.95rem] text-[#5f7881] max-[960px]:px-[18px]">
-        <p className="m-0">
+      <footer className="border-t-[4px] border-[#101010] bg-[#fffef8] px-4 py-4 text-center sm:px-6">
+        <p className="m-0 text-[0.78rem] font-black uppercase leading-[1.5] tracking-[0.08em] text-[#101010]">
           {new Date().getFullYear()} · Estructura lista para escalar por capas y
           conectar con tu backend.
         </p>

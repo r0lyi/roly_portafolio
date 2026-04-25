@@ -457,7 +457,7 @@ function AdminProjectsManager({ onDataChange }) {
                 </button>
               </div>
 
-              <p className="m-0 text-sm leading-6 text-[#5f7881]">
+              <p className="m-0 text-sm font-bold uppercase leading-6 tracking-[0.04em] text-[#3c3c3c]">
                 Las imagenes locales se sirven desde `frontend/public/img`. Puedes
                 escribir `capturas/app.webp`, `img/capturas/app.webp`,
                 `public/img/capturas/app.webp` o la ruta final `/img/...`.

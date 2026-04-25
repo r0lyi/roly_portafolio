@@ -1,8 +1,8 @@
 import { LogOut } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import {
+  adminEyebrowClass,
   dangerButtonClass,
-  eyebrowClass,
   secondaryButtonClass,
 } from '../../styles/tailwindClasses.js'
 
@@ -14,23 +14,23 @@ function AdminSidebar({
   onLogout,
 }) {
   return (
-    <aside className="sticky top-6 grid gap-5 rounded-[32px] border border-[rgba(21,39,48,0.12)] bg-[radial-gradient(circle_at_top_right,rgba(39,105,95,0.1),transparent_34%),linear-gradient(180deg,rgba(255,255,255,0.85),rgba(255,249,240,0.7))] p-6 backdrop-blur-[18px] max-[960px]:static">
+    <aside className="sticky top-6 grid gap-5 border-[4px] border-[#101010] bg-[#fffef8] p-5 shadow-[8px_8px_0_rgba(16,16,16,0.16)] max-[960px]:static">
       <div className="grid gap-3">
-        <p className={eyebrowClass}>Admin console</p>
-        <h2 className="m-0 max-w-none font-['Fraunces'] text-[clamp(1.9rem,3vw,2.4rem)] leading-[1.02] text-[#112029]">
-          Gestion del portfolio
+        <p className={adminEyebrowClass}>Admin console</p>
+        <h2 className="m-0 max-w-none font-['Manrope'] text-[clamp(2rem,4vw,2.9rem)] font-extrabold uppercase leading-[0.94] tracking-[-0.06em] text-[#101010]">
+          Gestion brutal del portfolio
         </h2>
-        <p className="m-0 text-[#5f7881]">
+        <p className="m-0 text-[1rem] font-bold leading-[1.6] text-[#2f2f2f]">
           Panel conectado al backend para administrar contenido, mensajes y
           cuenta del sistema.
         </p>
       </div>
 
-      <div className="grid gap-1.5 rounded-[22px] border border-[rgba(21,39,48,0.12)] bg-[rgba(255,255,255,0.72)] px-[18px] py-4">
-        <span className="text-[0.82rem] font-extrabold uppercase tracking-[0.08em] text-[#5f7881]">
+      <div className="grid gap-1.5 border-[3px] border-[#101010] bg-[#f2f0e8] px-[18px] py-4">
+        <span className="text-[0.76rem] font-black uppercase tracking-[0.1em] text-[#101010]">
           Sesion activa
         </span>
-        <strong>{userEmail}</strong>
+        <strong className="break-all text-[1.02rem] text-[#101010]">{userEmail}</strong>
       </div>
 
       <nav className="grid gap-2.5" aria-label="Secciones del panel admin">
@@ -42,25 +42,27 @@ function AdminSidebar({
             <button
               key={section.id}
               type="button"
-              className={`flex w-full items-start gap-[14px] rounded-[22px] border px-4 py-[14px] text-left transition duration-200 ${
+              className={`flex w-full items-start gap-[14px] border-[3px] px-4 py-[14px] text-left transition duration-200 ${
                 isActive
-                  ? 'border-transparent bg-[linear-gradient(135deg,#163a45,#214e59)] text-white shadow-[0_16px_34px_rgba(17,32,41,0.18)]'
-                  : 'border-transparent bg-transparent text-[#112029] hover:-translate-y-px hover:border-[rgba(17,32,41,0.12)] hover:bg-[rgba(255,255,255,0.68)]'
+                  ? 'border-[#101010] bg-[#18ff48] text-[#101010] shadow-[6px_6px_0_#101010]'
+                  : 'border-[#101010] bg-white text-[#101010] shadow-[4px_4px_0_rgba(16,16,16,0.14)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_rgba(16,16,16,0.16)]'
               }`}
               onClick={() => onSelectSection(section.id)}
             >
               <span
-                className={`inline-grid h-[38px] w-[38px] place-items-center rounded-[14px] ${
+                className={`inline-grid h-[38px] w-[38px] place-items-center border-[3px] border-[#101010] ${
                   isActive
-                    ? 'bg-[rgba(255,255,255,0.16)]'
-                    : 'bg-[rgba(17,32,41,0.08)]'
+                    ? 'bg-white'
+                    : 'bg-[#f2f0e8]'
                 }`}
               >
                 <Icon size={18} strokeWidth={2.2} />
               </span>
-              <span className="grid gap-1">
-                <strong className="text-[0.98rem]">{section.label}</strong>
-                <span className={isActive ? 'text-white/80' : 'text-[#5f7881]'}>
+              <span className="grid gap-1.5">
+                <strong className="text-[0.94rem] font-black uppercase tracking-[0.02em]">
+                  {section.label}
+                </strong>
+                <span className="text-[0.88rem] leading-[1.45] text-[#343434]">
                   {section.description}
                 </span>
               </span>

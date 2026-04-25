@@ -19,9 +19,9 @@ import { getContactMessages } from '../../services/api/contactMessages.js'
 import { getExperiences } from '../../services/api/experiences.js'
 import { getProjects } from '../../services/api/projects.js'
 import {
-  eyebrowClass,
-  heroSummaryClass,
-  pageSectionClass,
+  adminDisplayHeadingClass,
+  adminEyebrowClass,
+  adminSummaryClass,
 } from '../../styles/tailwindClasses.js'
 import { getTechnologies } from '../../services/api/technologies.js'
 import { getUsers } from '../../services/api/users.js'
@@ -138,8 +138,8 @@ function AdminDashboardPage() {
   }
 
   return (
-    <section className={`${pageSectionClass} min-h-[72vh]`}>
-      <div className="grid items-start gap-5 [grid-template-columns:320px_minmax(0,1fr)] max-[960px]:grid-cols-1">
+    <section className="grid gap-6">
+      <div className="grid items-start gap-6 [grid-template-columns:320px_minmax(0,1fr)] max-[960px]:grid-cols-1">
         <AdminSidebar
           sections={adminSections}
           activeSectionId={activeSection.id}
@@ -148,17 +148,39 @@ function AdminDashboardPage() {
           onLogout={handleLogout}
         />
 
-        <div className="grid min-w-0 gap-5">
-          <div className="rounded-[32px] border border-[rgba(21,39,48,0.12)] bg-[radial-gradient(circle_at_top_left,rgba(197,107,77,0.12),transparent_28%),linear-gradient(180deg,rgba(255,255,255,0.88),rgba(255,249,241,0.7))] p-7 backdrop-blur-[16px]">
-            <p className={eyebrowClass}>Base de datos y contenido</p>
-            <h1 className="m-0 max-w-[11ch] font-['Fraunces'] text-[clamp(2.6rem,5vw,4.4rem)] leading-[1.02] text-[#112029] max-[960px]:max-w-none">
-              Panel de administracion completo para el portfolio.
-            </h1>
-            <p className={`mt-6 ${heroSummaryClass}`}>
-              Gestiona las tablas del proyecto desde una interfaz profesional,
-              usando directamente la API del backend y manteniendo la sesion del
-              administrador protegida.
-            </p>
+        <div className="grid min-w-0 gap-6">
+          <div className="relative overflow-hidden border-[4px] border-[#101010] bg-[#fffef8] p-[clamp(22px,4vw,38px)] shadow-[10px_10px_0_rgba(16,16,16,0.16)]">
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute right-4 top-4 hidden h-24 w-24 border-[3px] border-[#101010] bg-[#ffde59] lg:block"
+            />
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute bottom-0 right-0 h-14 w-32 border-l-[4px] border-t-[4px] border-[#101010] bg-[#18ff48]"
+            />
+            <div className="relative z-[1]">
+              <p className={adminEyebrowClass}>Base de datos y contenido</p>
+              <h1 className={`mt-5 ${adminDisplayHeadingClass} max-[960px]:max-w-none`}>
+                Panel de administracion operativo para el portfolio.
+              </h1>
+              <p className={`mt-5 ${adminSummaryClass}`}>
+                Gestiona las tablas del proyecto desde una interfaz brutalista,
+                clara y de alto contraste, usando directamente la API del
+                backend y manteniendo la sesion del administrador protegida.
+              </p>
+
+              <div className="mt-6 flex flex-wrap gap-3">
+                <span className="border-[3px] border-[#101010] bg-white px-3 py-2 text-[0.76rem] font-black uppercase tracking-[0.08em] text-[#101010]">
+                  CRUD conectado
+                </span>
+                <span className="border-[3px] border-[#101010] bg-[#ffde59] px-3 py-2 text-[0.76rem] font-black uppercase tracking-[0.08em] text-[#101010]">
+                  Sesion segura
+                </span>
+                <span className="border-[3px] border-[#101010] bg-[#18ff48] px-3 py-2 text-[0.76rem] font-black uppercase tracking-[0.08em] text-[#101010]">
+                  Flujo editorial
+                </span>
+              </div>
+            </div>
           </div>
 
           <div key={activeSection.id} className="min-w-0">
