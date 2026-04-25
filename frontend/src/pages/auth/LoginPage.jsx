@@ -4,6 +4,22 @@ import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import useAuth from '../../hooks/useAuth.js'
 import useDocumentTitle from '../../hooks/useDocumentTitle.js'
 import { getAuthStatus } from '../../services/api/auth.js'
+import {
+  cardBodyClass,
+  cardMetaClass,
+  cardTitleClass,
+  contentCardClass,
+  displayHeadingClass,
+  eyebrowClass,
+  formFieldClass,
+  formLabelClass,
+  formMessageClass,
+  heroSummaryClass,
+  pageSectionClass,
+  primaryButtonClass,
+  sectionHeadingClass,
+  textInputClass,
+} from '../../styles/tailwindClasses.js'
 import { getApiErrorMessage } from '../../utils/getApiErrorMessage.js'
 
 function LoginPage() {
@@ -102,32 +118,32 @@ function LoginPage() {
   }
 
   return (
-    <section className="page-section auth-page">
-      <div className="auth-layout">
-        <div className="auth-copy">
-          <p className="eyebrow">Acceso administrador</p>
-          <h1>Inicia sesion para entrar al dashboard.</h1>
-          <p className="hero-summary">
+    <section className={`${pageSectionClass} min-h-[72vh]`}>
+      <div className="grid items-start gap-6 [grid-template-columns:minmax(0,1.05fr)_minmax(320px,0.95fr)] max-[960px]:grid-cols-1">
+        <div>
+          <p className={eyebrowClass}>Acceso administrador</p>
+          <h1 className={displayHeadingClass}>Inicia sesion para entrar al dashboard.</h1>
+          <p className={`mt-6 ${heroSummaryClass}`}>
             El formulario valida el email y la contrasena usando la logica
             existente del backend.
           </p>
 
-          <div className="auth-feature-list">
-            <div className="content-card auth-feature-card">
+          <div className="mt-6 grid gap-[14px]">
+            <div className={`${contentCardClass} grid grid-cols-[auto_1fr] items-start gap-[14px]`}>
               <ShieldCheck size={20} strokeWidth={2.2} />
               <div>
-                <h3>Autenticacion real</h3>
-                <p>
+                <h3 className={cardTitleClass}>Autenticacion real</h3>
+                <p className={cardBodyClass}>
                   El acceso se comprueba contra <code>/api/auth/me</code>.
                 </p>
               </div>
             </div>
 
-            <div className="content-card auth-feature-card">
+            <div className={`${contentCardClass} grid grid-cols-[auto_1fr] items-start gap-[14px]`}>
               <LogIn size={20} strokeWidth={2.2} />
               <div>
-                <h3>Sesion de admin</h3>
-                <p>
+                <h3 className={cardTitleClass}>Sesion de admin</h3>
+                <p className={cardBodyClass}>
                   La sesion se conserva en la pestana para proteger el panel.
                 </p>
               </div>
@@ -135,29 +151,30 @@ function LoginPage() {
           </div>
         </div>
 
-        <div className="auth-form-card">
-          <p className="card-meta">Login</p>
-          <h2>Panel de administracion</h2>
+        <div className={contentCardClass}>
+          <p className={cardMetaClass}>Login</p>
+          <h2 className={`mt-[10px] ${sectionHeadingClass}`}>Panel de administracion</h2>
 
           {!pageState.isCheckingStatus && !pageState.adminConfigured ? (
-            <p className="form-message form-warning">
+            <p className={`mt-[18px] ${formMessageClass('warning')}`}>
               Aun no existe un admin configurado en el backend. Primero debes
               crear el usuario administrador.
             </p>
           ) : null}
 
           {pageState.error ? (
-            <p className="form-message form-error">{pageState.error}</p>
+            <p className={`mt-[18px] ${formMessageClass('error')}`}>{pageState.error}</p>
           ) : null}
 
-          <form className="auth-form" onSubmit={handleSubmit}>
-            <label className="form-field" htmlFor="email">
-              <span className="form-label">
+          <form className="mt-6 grid gap-4" onSubmit={handleSubmit}>
+            <label className={formFieldClass} htmlFor="email">
+              <span className={formLabelClass}>
                 <Mail size={16} strokeWidth={2.2} />
                 <span>Email</span>
               </span>
               <input
                 id="email"
+                className={textInputClass}
                 name="email"
                 type="email"
                 autoComplete="username"
@@ -168,13 +185,14 @@ function LoginPage() {
               />
             </label>
 
-            <label className="form-field" htmlFor="password">
-              <span className="form-label">
+            <label className={formFieldClass} htmlFor="password">
+              <span className={formLabelClass}>
                 <LockKeyhole size={16} strokeWidth={2.2} />
                 <span>Contrasena</span>
               </span>
               <input
                 id="password"
+                className={textInputClass}
                 name="password"
                 type="password"
                 autoComplete="current-password"
@@ -188,7 +206,7 @@ function LoginPage() {
 
             <button
               type="submit"
-              className="primary-button auth-submit"
+              className={`${primaryButtonClass} w-full justify-center`}
               disabled={isLoading || pageState.isSubmitting}
             >
               {pageState.isSubmitting ? 'Entrando...' : 'Iniciar sesion'}

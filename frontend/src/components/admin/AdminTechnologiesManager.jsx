@@ -8,6 +8,28 @@ import {
   updateTechnology,
 } from '../../services/api/technologies.js'
 import { getApiErrorMessage } from '../../utils/getApiErrorMessage.js'
+import {
+  adminEmptyStateClass,
+  adminFormActionsClass,
+  adminFormClass,
+  adminInputGridTwoClass,
+  adminModuleClass,
+  adminPanelClass,
+  adminPanelHeadingClass,
+  adminPanelHeadingMetaClass,
+  adminRecordCardClass,
+  adminRecordListClass,
+  adminRecordMainClass,
+  adminRecordMetaClass,
+  adminRecordSummaryClass,
+  adminResourceGridClass,
+  dangerButtonClass,
+  formFieldClass,
+  formLabelClass,
+  primaryButtonClass,
+  secondaryButtonClass,
+  textInputClass,
+} from '../../styles/tailwindClasses.js'
 
 const initialFormData = {
   name: '',
@@ -209,7 +231,7 @@ function AdminTechnologiesManager({ onDataChange }) {
   }
 
   return (
-    <section className="admin-module">
+    <section className={adminModuleClass}>
       <AdminSectionHeader
         eyebrow="CRUD de tecnologias"
         title="Stack tecnico reutilizable para proyectos."
@@ -217,7 +239,7 @@ function AdminTechnologiesManager({ onDataChange }) {
         actions={
           <button
             type="button"
-            className="secondary-button"
+            className={secondaryButtonClass}
             onClick={handleCreateNew}
           >
             Nueva tecnologia
@@ -228,35 +250,37 @@ function AdminTechnologiesManager({ onDataChange }) {
       <AdminStatusBanner type="error" message={viewState.error} />
       <AdminStatusBanner type="success" message={viewState.success} />
 
-      <div className="admin-resource-grid">
-        <div className="admin-resource-panel">
-          <div className="admin-panel-heading">
+      <div className={adminResourceGridClass}>
+        <div className={adminPanelClass}>
+          <div className={adminPanelHeadingClass}>
             <h3>Registros</h3>
-            <span>{viewState.isLoading ? 'Cargando...' : technologies.length}</span>
+            <span className={adminPanelHeadingMetaClass}>
+              {viewState.isLoading ? 'Cargando...' : technologies.length}
+            </span>
           </div>
 
           {technologies.length === 0 && !viewState.isLoading ? (
-            <div className="admin-empty-state">
-              <p>No hay tecnologias creadas todavia.</p>
+            <div className={adminEmptyStateClass}>
+              <p className="m-0">No hay tecnologias creadas todavia.</p>
             </div>
           ) : (
-            <div className="admin-record-list">
+            <div className={adminRecordListClass}>
               {technologies.map((technology) => (
                 <button
                   key={technology.id}
                   type="button"
-                  className={`admin-record-card${
-                    selectedTechnologyId === technology.id
-                      ? ' admin-record-card-active'
-                      : ''
-                  }`}
+                  className={adminRecordCardClass(
+                    selectedTechnologyId === technology.id,
+                  )}
                   onClick={() => startEditing(technology)}
                 >
-                  <div className="admin-record-main">
+                  <div className={adminRecordMainClass}>
                     <strong>{technology.name}</strong>
-                    <p>{technology.group || 'Sin grupo'}</p>
+                    <p className={adminRecordSummaryClass}>
+                      {technology.group || 'Sin grupo'}
+                    </p>
                   </div>
-                  <div className="admin-record-meta">
+                  <div className={adminRecordMetaClass}>
                     <span>Orden: {technology.order ?? 'N/D'}</span>
                     <span>ID #{technology.id}</span>
                   </div>
@@ -266,18 +290,23 @@ function AdminTechnologiesManager({ onDataChange }) {
           )}
         </div>
 
-        <div className="admin-resource-panel">
-          <div className="admin-panel-heading">
+        <div className={adminPanelClass}>
+          <div className={adminPanelHeadingClass}>
             <h3>{selectedTechnologyId ? 'Editar tecnologia' : 'Nueva tecnologia'}</h3>
-            {selectedTechnologyId ? <span>ID #{selectedTechnologyId}</span> : null}
+            {selectedTechnologyId ? (
+              <span className={adminPanelHeadingMetaClass}>
+                ID #{selectedTechnologyId}
+              </span>
+            ) : null}
           </div>
 
-          <form className="admin-form" onSubmit={handleSubmit}>
-            <div className="admin-input-grid admin-input-grid-two">
-              <label className="form-field" htmlFor="technology-name">
-                <span className="form-label">Nombre</span>
+          <form className={adminFormClass} onSubmit={handleSubmit}>
+            <div className={adminInputGridTwoClass}>
+              <label className={formFieldClass} htmlFor="technology-name">
+                <span className={formLabelClass}>Nombre</span>
                 <input
                   id="technology-name"
+                  className={textInputClass}
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
@@ -286,10 +315,11 @@ function AdminTechnologiesManager({ onDataChange }) {
                 />
               </label>
 
-              <label className="form-field" htmlFor="technology-group">
-                <span className="form-label">Grupo</span>
+              <label className={formFieldClass} htmlFor="technology-group">
+                <span className={formLabelClass}>Grupo</span>
                 <input
                   id="technology-group"
+                  className={textInputClass}
                   name="group"
                   value={formData.group}
                   onChange={handleChange}
@@ -298,10 +328,11 @@ function AdminTechnologiesManager({ onDataChange }) {
               </label>
             </div>
 
-            <label className="form-field" htmlFor="technology-order">
-              <span className="form-label">Orden</span>
+            <label className={formFieldClass} htmlFor="technology-order">
+              <span className={formLabelClass}>Orden</span>
               <input
                 id="technology-order"
+                className={textInputClass}
                 name="order"
                 type="number"
                 value={formData.order}
@@ -310,15 +341,15 @@ function AdminTechnologiesManager({ onDataChange }) {
               />
             </label>
 
-            <div className="admin-form-actions">
-              <button type="submit" className="primary-button">
+            <div className={adminFormActionsClass}>
+              <button type="submit" className={primaryButtonClass}>
                 {selectedTechnologyId ? 'Guardar cambios' : 'Crear tecnologia'}
               </button>
 
               {selectedTechnologyId ? (
                 <button
                   type="button"
-                  className="auth-link auth-link-danger"
+                  className={dangerButtonClass}
                   onClick={handleDelete}
                 >
                   Eliminar

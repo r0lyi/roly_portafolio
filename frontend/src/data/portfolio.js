@@ -1,20 +1,54 @@
 export const portfolioData = {
   profile: {
     name: 'Roly',
-    role: 'Portafolio Full Stack',
-    headline: 'Una base de React lista para crecer sin mezclar responsabilidades.',
+    brand: 'ROLY_ENGINE',
+    role: 'Full-stack engineer',
+    headline: 'Creando sistemas digitales que escalan con intención.',
+    heroTitleLead: 'CREANDO',
+    heroTitleAccent: 'SISTEMAS',
+    heroTitleLines: ['DIGITALES', 'QUE ESCALAN.'],
     summary:
-      'Organicé el frontend para que puedas separar arranque, layout, páginas, secciones, componentes reutilizables y conexión con la API desde el principio.',
-    location: 'Frontend con React + Vite',
-    availability: 'Preparado para conectar con FastAPI',
-    ctaPrimary: {
-      label: 'Ver estructura',
-      sectionId: 'about',
-    },
-    ctaSecondary: {
-      label: 'Ir a proyectos',
-      sectionId: 'projects',
-    },
+      'Frontend y backend organizados para crecer con una UI contundente, componentes reutilizables y una base lista para conectar con FastAPI.',
+    location: 'React + Vite / FastAPI',
+    availability: 'Disponible para nuevas iteraciones',
+    availabilityLabel: 'AVAILABLE_FOR_WORK',
+    socialLinks: [
+      {
+        label: 'GitHub',
+        href: 'https://github.com/tu-usuario',
+      },
+      {
+        label: 'LinkedIn',
+        href: 'https://www.linkedin.com/in/tu-perfil',
+      },
+    ],
+  },
+  about: {
+    label: 'WHO_AM_I?',
+    headline:
+      'CREO EN LA ESTRUCTURA, LA HONESTIDAD Y EL RENDIMIENTO. MI PROCESO ES TÉCNICO, MI DISEÑO ES CONTUNDENTE Y MI CÓDIGO ES LIMPIO.',
+    body:
+      'Desde este lado del entorno digital, trabajo uniendo eficiencia backend con impacto frontend. Ya sea planteando una arquitectura escalable o construyendo una interfaz con carácter, priorizo siempre la claridad para quien usa el producto y para quien mantiene el código.',
+  },
+  experienceLog: {
+    label: 'EXPERIENCE_LOG',
+  },
+  selectedWorks: {
+    label: 'SELECTED_WORKS',
+  },
+  systemStack: {
+    label: 'SYSTEM_STACK',
+    description: 'Las herramientas con las que construyo, escalo y depuro sistemas.',
+    items: [
+      { label: 'JS/TS', icon: 'js' },
+      { label: 'REACT', icon: 'react' },
+      { label: 'NODE', icon: 'node' },
+      { label: 'PYTHON', icon: 'python' },
+      { label: 'DOCKER', icon: 'docker' },
+      { label: 'POSTGRES', icon: 'postgres' },
+      { label: 'AWS', icon: 'aws' },
+      { label: 'GRAFANA', icon: 'grafana' },
+    ],
   },
   architecture: [
     {
@@ -44,51 +78,68 @@ export const portfolioData = {
   ],
   projects: [
     {
-      title: 'Home modular',
+      title: 'NEO_DASHBOARD',
       description:
-        'La landing quedó dividida en secciones independientes para que editar contenido no implique tocar toda la página.',
-      stack: ['pages/home', 'sections/home', 'components/ui'],
-      status: 'Lista para iterar el diseño.',
+        'Plataforma visual modular construida con React y Vite para iterar interfaces de alto rendimiento con una base limpia.',
+      stack: ['REACT', 'VITE', 'UI'],
+      repositoryUrl: 'https://github.com/tu-usuario/neo-dashboard',
+      visual: 'portrait',
     },
     {
-      title: 'Capa de datos',
+      title: 'GRID_VAULT',
       description:
-        'El contenido inicial vive en un archivo de datos para poder reemplazarlo más adelante por la API sin rehacer la UI.',
-      stack: ['data/portfolio.js', 'hooks', 'utils'],
-      status: 'Lista para migrar a contenido real.',
+        'Arquitectura de datos desacoplada para mover contenido estático a una capa conectada sin rehacer la experiencia visual.',
+      stack: ['API', 'STATE', 'DATA'],
+      repositoryUrl: 'https://github.com/tu-usuario/grid-vault',
+      visual: 'vault',
     },
     {
-      title: 'Servicios conectables',
+      title: 'CORE_SHARD',
       description:
-        'Quedaron preparadas funciones para proyectos, experiencias y formulario de contacto usando Axios.',
-      stack: ['services/api/client.js', 'projects.js', 'contactMessages.js'],
-      status: 'Listas para consumir el backend.',
+        'Capa de servicios pensada para conectar proyectos, experiencias y mensajería con una API real sin fricción.',
+      stack: ['AXIOS', 'API', 'ADMIN'],
+      repositoryUrl: 'https://github.com/tu-usuario/core-shard',
+      visual: 'system',
     },
   ],
   experiences: [
     {
-      role: 'Base del frontend',
-      company: 'Arquitectura inicial',
-      period: 'Paso 1',
-      description:
-        'Separar responsabilidades desde el inicio evita que `App.jsx` se convierta en un archivo gigante.',
+      role: 'BASE_FRONTEND',
+      company: 'ARQUITECTURA_INICIAL',
+      period: 'PHASE_1',
+      featured: true,
+      highlights: [
+        'Separé `app`, `layouts`, `pages`, `sections` y `components` para evitar un arranque monolítico.',
+        'Organicé una capa de servicios alineada con FastAPI para que el frontend crezca sin reescrituras.',
+        'Definí una base visual consistente para iterar diseño sin mezclar estructura y contenido.',
+      ],
     },
     {
-      role: 'Escalabilidad',
-      company: 'Capas claras',
-      period: 'Paso 2',
-      description:
-        'Con esta estructura, sumar nuevas páginas, rutas privadas o panel admin es mucho más directo.',
+      role: 'SCALABILITY_CORE',
+      company: 'CAPAS_CLARAS',
+      period: 'PHASE_2',
+      highlights: [
+        'Preparé el proyecto para sumar nuevas páginas, navegación y rutas protegidas sin fricción.',
+        'Aislé las piezas reutilizables para que cada bloque de la home pueda rediseñarse por separado.',
+        'Reduje el acoplamiento entre vistas, datos y utilidades para mantener un flujo de trabajo limpio.',
+      ],
     },
     {
-      role: 'Integración',
-      company: 'Frontend + backend',
-      period: 'Paso 3',
-      description:
-        'La carpeta de servicios ya quedó alineada con `/projects`, `/experiences` y `/contact-messages`.',
+      role: 'API_INTEGRATION',
+      company: 'FRONTEND_BACKEND',
+      period: 'PHASE_3',
+      highlights: [
+        'Alineé el cliente con `/projects`, `/experiences` y `/contact-messages` para una integración directa.',
+        'Dejé el panel admin listo para autenticar, gestionar contenido y evolucionar junto al backend.',
+        'Mantengo la base preparada para conectar datos reales sin rehacer la interfaz existente.',
+      ],
     },
   ],
   contact: {
+    label: 'SECURE_CHANNEL',
+    description: 'Escribe para colaboraciones, propuestas o simplemente para hablar de arquitectura.',
+    submitLabel: 'SEND_MESSAGE >',
+    footerLabel: 'ROLY_PORTFOLIO.SYS',
     email: 'hola@roly.dev',
     note:
       'El siguiente paso natural sería conectar estas secciones con datos reales y montar un formulario usando tu backend.',

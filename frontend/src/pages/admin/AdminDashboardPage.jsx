@@ -18,6 +18,11 @@ import useDocumentTitle from '../../hooks/useDocumentTitle.js'
 import { getContactMessages } from '../../services/api/contactMessages.js'
 import { getExperiences } from '../../services/api/experiences.js'
 import { getProjects } from '../../services/api/projects.js'
+import {
+  eyebrowClass,
+  heroSummaryClass,
+  pageSectionClass,
+} from '../../styles/tailwindClasses.js'
 import { getTechnologies } from '../../services/api/technologies.js'
 import { getUsers } from '../../services/api/users.js'
 import { getApiErrorMessage } from '../../utils/getApiErrorMessage.js'
@@ -133,8 +138,8 @@ function AdminDashboardPage() {
   }
 
   return (
-    <section className="page-section admin-page admin-console">
-      <div className="admin-console-shell">
+    <section className={`${pageSectionClass} min-h-[72vh]`}>
+      <div className="grid items-start gap-5 [grid-template-columns:320px_minmax(0,1fr)] max-[960px]:grid-cols-1">
         <AdminSidebar
           sections={adminSections}
           activeSectionId={activeSection.id}
@@ -143,18 +148,20 @@ function AdminDashboardPage() {
           onLogout={handleLogout}
         />
 
-        <div className="admin-main">
-          <div className="admin-main-hero">
-            <p className="eyebrow">Base de datos y contenido</p>
-            <h1>Panel de administracion completo para el portfolio.</h1>
-            <p className="hero-summary">
+        <div className="grid min-w-0 gap-5">
+          <div className="rounded-[32px] border border-[rgba(21,39,48,0.12)] bg-[radial-gradient(circle_at_top_left,rgba(197,107,77,0.12),transparent_28%),linear-gradient(180deg,rgba(255,255,255,0.88),rgba(255,249,241,0.7))] p-7 backdrop-blur-[16px]">
+            <p className={eyebrowClass}>Base de datos y contenido</p>
+            <h1 className="m-0 max-w-[11ch] font-['Fraunces'] text-[clamp(2.6rem,5vw,4.4rem)] leading-[1.02] text-[#112029] max-[960px]:max-w-none">
+              Panel de administracion completo para el portfolio.
+            </h1>
+            <p className={`mt-6 ${heroSummaryClass}`}>
               Gestiona las tablas del proyecto desde una interfaz profesional,
               usando directamente la API del backend y manteniendo la sesion del
               administrador protegida.
             </p>
           </div>
 
-          <div key={activeSection.id} className="admin-main-content">
+          <div key={activeSection.id} className="min-w-0">
             {renderActiveSection()}
           </div>
         </div>

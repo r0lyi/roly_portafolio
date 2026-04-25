@@ -12,6 +12,29 @@ import {
   formatAdminDate,
 } from '../../utils/formatAdminValue.js'
 import { getApiErrorMessage } from '../../utils/getApiErrorMessage.js'
+import {
+  adminFormActionsClass,
+  adminFormClass,
+  adminInputGridTwoClass,
+  adminModuleClass,
+  adminPanelClass,
+  adminPanelHeadingClass,
+  adminPanelHeadingMetaClass,
+  adminRecordCardClass,
+  adminRecordListClass,
+  adminRecordMainClass,
+  adminRecordMetaClass,
+  adminRecordSummaryClass,
+  adminResourceGridClass,
+  adminEmptyStateClass,
+  dangerButtonClass,
+  formFieldClass,
+  formLabelClass,
+  primaryButtonClass,
+  secondaryButtonClass,
+  textInputClass,
+  textareaClass,
+} from '../../styles/tailwindClasses.js'
 
 const initialFormData = {
   title: '',
@@ -194,7 +217,7 @@ function AdminExperiencesManager({ onDataChange }) {
   }
 
   return (
-    <section className="admin-module">
+    <section className={adminModuleClass}>
       <AdminSectionHeader
         eyebrow="CRUD de experiencias"
         title="Gestion profesional de trayectoria y cronologia."
@@ -202,7 +225,7 @@ function AdminExperiencesManager({ onDataChange }) {
         actions={
           <button
             type="button"
-            className="secondary-button"
+            className={secondaryButtonClass}
             onClick={handleCreateNew}
           >
             Nueva experiencia
@@ -213,35 +236,37 @@ function AdminExperiencesManager({ onDataChange }) {
       <AdminStatusBanner type="error" message={viewState.error} />
       <AdminStatusBanner type="success" message={viewState.success} />
 
-      <div className="admin-resource-grid">
-        <div className="admin-resource-panel">
-          <div className="admin-panel-heading">
+      <div className={adminResourceGridClass}>
+        <div className={adminPanelClass}>
+          <div className={adminPanelHeadingClass}>
             <h3>Registros</h3>
-            <span>{viewState.isLoading ? 'Cargando...' : experiences.length}</span>
+            <span className={adminPanelHeadingMetaClass}>
+              {viewState.isLoading ? 'Cargando...' : experiences.length}
+            </span>
           </div>
 
           {experiences.length === 0 && !viewState.isLoading ? (
-            <div className="admin-empty-state">
-              <p>No hay experiencias registradas todavia.</p>
+            <div className={adminEmptyStateClass}>
+              <p className="m-0">No hay experiencias registradas todavia.</p>
             </div>
           ) : (
-            <div className="admin-record-list">
+            <div className={adminRecordListClass}>
               {experiences.map((experience) => (
                 <button
                   key={experience.id}
                   type="button"
-                  className={`admin-record-card${
-                    selectedExperienceId === experience.id
-                      ? ' admin-record-card-active'
-                      : ''
-                  }`}
+                  className={adminRecordCardClass(
+                    selectedExperienceId === experience.id,
+                  )}
                   onClick={() => startEditing(experience)}
                 >
-                  <div className="admin-record-main">
+                  <div className={adminRecordMainClass}>
                     <strong>{experience.title}</strong>
-                    <p>{experience.company || 'Sin empresa'}</p>
+                    <p className={adminRecordSummaryClass}>
+                      {experience.company || 'Sin empresa'}
+                    </p>
                   </div>
-                  <div className="admin-record-meta">
+                  <div className={adminRecordMetaClass}>
                     <span>
                       {formatAdminDate(experience.start_date)} -{' '}
                       {experience.end_date
@@ -256,18 +281,23 @@ function AdminExperiencesManager({ onDataChange }) {
           )}
         </div>
 
-        <div className="admin-resource-panel">
-          <div className="admin-panel-heading">
+        <div className={adminPanelClass}>
+          <div className={adminPanelHeadingClass}>
             <h3>{selectedExperienceId ? 'Editar experiencia' : 'Nueva experiencia'}</h3>
-            {selectedExperienceId ? <span>ID #{selectedExperienceId}</span> : null}
+            {selectedExperienceId ? (
+              <span className={adminPanelHeadingMetaClass}>
+                ID #{selectedExperienceId}
+              </span>
+            ) : null}
           </div>
 
-          <form className="admin-form" onSubmit={handleSubmit}>
-            <div className="admin-input-grid admin-input-grid-two">
-              <label className="form-field" htmlFor="experience-title">
-                <span className="form-label">Titulo</span>
+          <form className={adminFormClass} onSubmit={handleSubmit}>
+            <div className={adminInputGridTwoClass}>
+              <label className={formFieldClass} htmlFor="experience-title">
+                <span className={formLabelClass}>Titulo</span>
                 <input
                   id="experience-title"
+                  className={textInputClass}
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
@@ -276,10 +306,11 @@ function AdminExperiencesManager({ onDataChange }) {
                 />
               </label>
 
-              <label className="form-field" htmlFor="experience-company">
-                <span className="form-label">Empresa</span>
+              <label className={formFieldClass} htmlFor="experience-company">
+                <span className={formLabelClass}>Empresa</span>
                 <input
                   id="experience-company"
+                  className={textInputClass}
                   name="company"
                   value={formData.company}
                   onChange={handleChange}
@@ -288,10 +319,11 @@ function AdminExperiencesManager({ onDataChange }) {
               </label>
             </div>
 
-            <label className="form-field" htmlFor="experience-description">
-              <span className="form-label">Descripcion</span>
+            <label className={formFieldClass} htmlFor="experience-description">
+              <span className={formLabelClass}>Descripcion</span>
               <textarea
                 id="experience-description"
+                className={textareaClass}
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
@@ -300,11 +332,12 @@ function AdminExperiencesManager({ onDataChange }) {
               />
             </label>
 
-            <div className="admin-input-grid admin-input-grid-two">
-              <label className="form-field" htmlFor="experience-start-date">
-                <span className="form-label">Fecha de inicio</span>
+            <div className={adminInputGridTwoClass}>
+              <label className={formFieldClass} htmlFor="experience-start-date">
+                <span className={formLabelClass}>Fecha de inicio</span>
                 <input
                   id="experience-start-date"
+                  className={textInputClass}
                   name="start_date"
                   type="date"
                   value={formData.start_date}
@@ -312,10 +345,11 @@ function AdminExperiencesManager({ onDataChange }) {
                 />
               </label>
 
-              <label className="form-field" htmlFor="experience-end-date">
-                <span className="form-label">Fecha de fin</span>
+              <label className={formFieldClass} htmlFor="experience-end-date">
+                <span className={formLabelClass}>Fecha de fin</span>
                 <input
                   id="experience-end-date"
+                  className={textInputClass}
                   name="end_date"
                   type="date"
                   value={formData.end_date}
@@ -324,15 +358,15 @@ function AdminExperiencesManager({ onDataChange }) {
               </label>
             </div>
 
-            <div className="admin-form-actions">
-              <button type="submit" className="primary-button">
+            <div className={adminFormActionsClass}>
+              <button type="submit" className={primaryButtonClass}>
                 {selectedExperienceId ? 'Guardar cambios' : 'Crear experiencia'}
               </button>
 
               {selectedExperienceId ? (
                 <button
                   type="button"
-                  className="auth-link auth-link-danger"
+                  className={dangerButtonClass}
                   onClick={handleDelete}
                 >
                   Eliminar

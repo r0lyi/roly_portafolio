@@ -13,6 +13,37 @@ import {
   formatAdminDateTime,
 } from '../../utils/formatAdminValue.js'
 import { getApiErrorMessage } from '../../utils/getApiErrorMessage.js'
+import {
+  adminChipGridClass,
+  adminChipOptionClass,
+  adminEmptyStateClass,
+  adminFieldsetClass,
+  adminFieldsetHeaderClass,
+  adminFormActionsClass,
+  adminFormClass,
+  adminImageEditorListClass,
+  adminImageEditorRowClass,
+  adminInlineDangerButtonClass,
+  adminInputGridTwoClass,
+  adminLinkButtonClass,
+  adminModuleClass,
+  adminPanelClass,
+  adminPanelHeadingClass,
+  adminPanelHeadingMetaClass,
+  adminRecordCardClass,
+  adminRecordListClass,
+  adminRecordMainClass,
+  adminRecordMetaClass,
+  adminRecordSummaryClass,
+  adminResourceGridClass,
+  dangerButtonClass,
+  formFieldClass,
+  formLabelClass,
+  primaryButtonClass,
+  secondaryButtonClass,
+  textInputClass,
+  textareaClass,
+} from '../../styles/tailwindClasses.js'
 
 const initialFormData = {
   title: '',
@@ -256,7 +287,7 @@ function AdminProjectsManager({ onDataChange }) {
   }
 
   return (
-    <section className="admin-module">
+    <section className={adminModuleClass}>
       <AdminSectionHeader
         eyebrow="CRUD de proyectos"
         title="Gestion central de proyectos, tecnologias e imagenes."
@@ -264,7 +295,7 @@ function AdminProjectsManager({ onDataChange }) {
         actions={
           <button
             type="button"
-            className="secondary-button"
+            className={secondaryButtonClass}
             onClick={handleCreateNew}
           >
             Nuevo proyecto
@@ -275,35 +306,35 @@ function AdminProjectsManager({ onDataChange }) {
       <AdminStatusBanner type="error" message={viewState.error} />
       <AdminStatusBanner type="success" message={viewState.success} />
 
-      <div className="admin-resource-grid">
-        <div className="admin-resource-panel">
-          <div className="admin-panel-heading">
+      <div className={adminResourceGridClass}>
+        <div className={adminPanelClass}>
+          <div className={adminPanelHeadingClass}>
             <h3>Registros</h3>
-            <span>{viewState.isLoading ? 'Cargando...' : projects.length}</span>
+            <span className={adminPanelHeadingMetaClass}>
+              {viewState.isLoading ? 'Cargando...' : projects.length}
+            </span>
           </div>
 
           {projects.length === 0 && !viewState.isLoading ? (
-            <div className="admin-empty-state">
-              <p>No hay proyectos creados todavia.</p>
+            <div className={adminEmptyStateClass}>
+              <p className="m-0">No hay proyectos creados todavia.</p>
             </div>
           ) : (
-            <div className="admin-record-list">
+            <div className={adminRecordListClass}>
               {projects.map((project) => (
                 <button
                   key={project.id}
                   type="button"
-                  className={`admin-record-card${
-                    selectedProjectId === project.id
-                      ? ' admin-record-card-active'
-                      : ''
-                  }`}
+                  className={adminRecordCardClass(selectedProjectId === project.id)}
                   onClick={() => startEditing(project)}
                 >
-                  <div className="admin-record-main">
+                  <div className={adminRecordMainClass}>
                     <strong>{project.title}</strong>
-                    <p>{createExcerpt(project.description, 80)}</p>
+                    <p className={adminRecordSummaryClass}>
+                      {createExcerpt(project.description, 80)}
+                    </p>
                   </div>
-                  <div className="admin-record-meta">
+                  <div className={adminRecordMetaClass}>
                     <span>
                       Tecnologias: {project.technologies.length} · Imagenes:{' '}
                       {project.images.length}
@@ -316,18 +347,21 @@ function AdminProjectsManager({ onDataChange }) {
           )}
         </div>
 
-        <div className="admin-resource-panel">
-          <div className="admin-panel-heading">
+        <div className={adminPanelClass}>
+          <div className={adminPanelHeadingClass}>
             <h3>{selectedProjectId ? 'Editar proyecto' : 'Nuevo proyecto'}</h3>
-            {selectedProjectId ? <span>ID #{selectedProjectId}</span> : null}
+            {selectedProjectId ? (
+              <span className={adminPanelHeadingMetaClass}>ID #{selectedProjectId}</span>
+            ) : null}
           </div>
 
-          <form className="admin-form" onSubmit={handleSubmit}>
-            <div className="admin-input-grid admin-input-grid-two">
-              <label className="form-field" htmlFor="project-title">
-                <span className="form-label">Titulo</span>
+          <form className={adminFormClass} onSubmit={handleSubmit}>
+            <div className={adminInputGridTwoClass}>
+              <label className={formFieldClass} htmlFor="project-title">
+                <span className={formLabelClass}>Titulo</span>
                 <input
                   id="project-title"
+                  className={textInputClass}
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
@@ -336,10 +370,11 @@ function AdminProjectsManager({ onDataChange }) {
                 />
               </label>
 
-              <label className="form-field" htmlFor="project-demo-url">
-                <span className="form-label">Demo URL</span>
+              <label className={formFieldClass} htmlFor="project-demo-url">
+                <span className={formLabelClass}>Demo URL</span>
                 <input
                   id="project-demo-url"
+                  className={textInputClass}
                   name="demo_url"
                   value={formData.demo_url}
                   onChange={handleChange}
@@ -348,10 +383,11 @@ function AdminProjectsManager({ onDataChange }) {
               </label>
             </div>
 
-            <label className="form-field" htmlFor="project-repo-url">
-              <span className="form-label">Repositorio</span>
+            <label className={formFieldClass} htmlFor="project-repo-url">
+              <span className={formLabelClass}>Repositorio</span>
               <input
                 id="project-repo-url"
+                className={textInputClass}
                 name="repo_url"
                 value={formData.repo_url}
                 onChange={handleChange}
@@ -359,10 +395,11 @@ function AdminProjectsManager({ onDataChange }) {
               />
             </label>
 
-            <label className="form-field" htmlFor="project-description">
-              <span className="form-label">Descripcion</span>
+            <label className={formFieldClass} htmlFor="project-description">
+              <span className={formLabelClass}>Descripcion</span>
               <textarea
                 id="project-description"
+                className={textareaClass}
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
@@ -371,31 +408,32 @@ function AdminProjectsManager({ onDataChange }) {
               />
             </label>
 
-            <div className="admin-fieldset">
-              <div className="admin-fieldset-header">
+            <div className={adminFieldsetClass}>
+              <div className={adminFieldsetHeaderClass}>
                 <h3>Tecnologias asociadas</h3>
-                <span>{formData.technology_ids.length} seleccionadas</span>
+                <span className={adminPanelHeadingMetaClass}>
+                  {formData.technology_ids.length} seleccionadas
+                </span>
               </div>
 
               {technologies.length === 0 ? (
-                <div className="admin-empty-state">
-                  <p>
+                <div className={adminEmptyStateClass}>
+                  <p className="m-0">
                     Primero crea tecnologias en su modulo para poder asociarlas.
                   </p>
                 </div>
               ) : (
-                <div className="admin-chip-grid">
+                <div className={adminChipGridClass}>
                   {technologies.map((technology) => (
                     <label
                       key={technology.id}
-                      className={`admin-chip-option${
-                        formData.technology_ids.includes(technology.id)
-                          ? ' admin-chip-option-active'
-                          : ''
-                      }`}
+                      className={adminChipOptionClass(
+                        formData.technology_ids.includes(technology.id),
+                      )}
                     >
                       <input
                         type="checkbox"
+                        className="pointer-events-none absolute inset-0 opacity-0"
                         checked={formData.technology_ids.includes(technology.id)}
                         onChange={() => toggleTechnology(technology.id)}
                       />
@@ -406,12 +444,12 @@ function AdminProjectsManager({ onDataChange }) {
               )}
             </div>
 
-            <div className="admin-fieldset">
-              <div className="admin-fieldset-header">
+            <div className={adminFieldsetClass}>
+              <div className={adminFieldsetHeaderClass}>
                 <h3>Imagenes embebidas del proyecto</h3>
                 <button
                   type="button"
-                  className="admin-link-button"
+                  className={adminLinkButtonClass}
                   onClick={addImageRow}
                 >
                   Agregar fila de imagen
@@ -419,17 +457,18 @@ function AdminProjectsManager({ onDataChange }) {
               </div>
 
               {formData.images.length === 0 ? (
-                <div className="admin-empty-state">
-                  <p>
+                <div className={adminEmptyStateClass}>
+                  <p className="m-0">
                     Este proyecto aun no tiene imagenes. Puedes agregarlas aqui o
                     usar el modulo especifico de imagenes.
                   </p>
                 </div>
               ) : (
-                <div className="admin-image-editor-list">
+                <div className={adminImageEditorListClass}>
                   {formData.images.map((image) => (
-                    <div key={image.clientId} className="admin-image-editor-row">
+                    <div key={image.clientId} className={adminImageEditorRowClass}>
                       <input
+                        className={textInputClass}
                         value={image.image_url}
                         onChange={(event) =>
                           updateImageRow(
@@ -441,6 +480,7 @@ function AdminProjectsManager({ onDataChange }) {
                         placeholder="https://..."
                       />
                       <input
+                        className={textInputClass}
                         type="number"
                         value={image.position}
                         onChange={(event) =>
@@ -454,7 +494,7 @@ function AdminProjectsManager({ onDataChange }) {
                       />
                       <button
                         type="button"
-                        className="auth-link auth-link-danger admin-inline-danger"
+                        className={adminInlineDangerButtonClass}
                         onClick={() => removeImageRow(image.clientId)}
                       >
                         Quitar
@@ -465,15 +505,15 @@ function AdminProjectsManager({ onDataChange }) {
               )}
             </div>
 
-            <div className="admin-form-actions">
-              <button type="submit" className="primary-button">
+            <div className={adminFormActionsClass}>
+              <button type="submit" className={primaryButtonClass}>
                 {selectedProjectId ? 'Guardar cambios' : 'Crear proyecto'}
               </button>
 
               {selectedProjectId ? (
                 <button
                   type="button"
-                  className="auth-link auth-link-danger"
+                  className={dangerButtonClass}
                   onClick={handleDelete}
                 >
                   Eliminar

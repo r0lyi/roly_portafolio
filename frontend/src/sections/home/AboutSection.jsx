@@ -1,25 +1,40 @@
-import ContentCard from '../../components/ui/ContentCard.jsx'
-import SectionHeading from '../../components/ui/SectionHeading.jsx'
 import { portfolioData } from '../../data/portfolio.js'
 
 function AboutSection() {
-  return (
-    <section id="about" className="page-section">
-      <SectionHeading
-        eyebrow="Estructura base"
-        title="Carpetas pensadas para mantener orden cuando el proyecto crezca."
-        description="Cada carpeta tiene una responsabilidad clara para que el frontend siga legible incluso cuando sumes nuevas vistas, estado global o llamadas al backend."
-      />
+  const { about, profile } = portfolioData
 
-      <div className="card-grid">
-        {portfolioData.architecture.map((item) => (
-          <ContentCard
-            key={item.title}
-            title={item.title}
-            subtitle={item.subtitle}
-            description={item.description}
-          />
-        ))}
+  return (
+    <section id="about" className="border-t-[4px] border-[#101010] bg-[#030303]">
+      <div className="mx-auto grid w-full max-w-[1180px] grid-cols-[minmax(220px,_0.7fr)_minmax(0,_1.3fr)] gap-11 px-6 py-[60px] pb-[70px] max-[960px]:grid-cols-1 max-[960px]:py-12 max-[640px]:gap-6 max-[640px]:py-[42px] max-[640px]:pb-12">
+        <div className="min-w-0">
+          <p className="m-0 text-[clamp(2.5rem,5.5vw,5rem)] font-black uppercase leading-[0.92] tracking-[-0.06em] text-[#18ff48]">
+            {about.label}
+          </p>
+        </div>
+
+        <div className="min-w-0">
+          <h2 className="m-0 max-w-[15ch] font-['Manrope'] text-[clamp(2rem,4.4vw,3.7rem)] font-extrabold uppercase leading-[1.02] tracking-[-0.05em] text-[#f2f2f2] max-[960px]:max-w-none max-[640px]:text-[clamp(1.6rem,8vw,2.4rem)]">
+            {about.headline}
+          </h2>
+          <p className="mt-[34px] max-w-[58ch] text-[1.28rem] font-bold leading-[1.55] text-[#7d7d7d] max-[640px]:mt-6 max-[640px]:text-base max-[640px]:leading-[1.6]">
+            {about.body}
+          </p>
+
+          <ul className="mt-7 flex flex-wrap gap-[14px] p-0 max-[640px]:mt-[22px] max-[640px]:gap-3" aria-label="Datos principales">
+            {[
+              profile.name,
+              profile.location,
+              profile.availability,
+            ].map((item) => (
+              <li
+                key={item}
+                className="list-none border-[3px] border-[#f2f2f2] px-4 py-3 text-[0.9rem] font-black uppercase leading-[1.2] tracking-[0.05em] text-[#f2f2f2] max-[640px]:w-full"
+              >
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   )

@@ -1,7 +1,7 @@
 export const navigationLinks = [
-  { label: 'Inicio', sectionId: 'hero' },
-  { label: 'Estructura', sectionId: 'about' },
-  { label: 'Proyectos', sectionId: 'projects' },
-  { label: 'Experiencia', sectionId: 'experience' },
-  { label: 'Contacto', sectionId: 'contact' },
+  { label: 'About', sectionId: 'about' },
+  { label: 'Experience', sectionId: 'experience' },
+  { label: 'Projects', sectionId: 'projects' },
+  { label: 'Skills', sectionId: 'skills' },
+  { label: 'Contact', sectionId: 'contact' },
 ]

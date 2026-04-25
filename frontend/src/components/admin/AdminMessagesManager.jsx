@@ -12,6 +12,30 @@ import {
   formatAdminDateTime,
 } from '../../utils/formatAdminValue.js'
 import { getApiErrorMessage } from '../../utils/getApiErrorMessage.js'
+import {
+  adminCheckboxRowClass,
+  adminEmptyStateClass,
+  adminFormActionsClass,
+  adminFormClass,
+  adminInputGridTwoClass,
+  adminModuleClass,
+  adminPanelClass,
+  adminPanelHeadingClass,
+  adminPanelHeadingMetaClass,
+  adminRecordCardClass,
+  adminRecordListClass,
+  adminRecordMainClass,
+  adminRecordMetaClass,
+  adminRecordSummaryClass,
+  adminResourceGridClass,
+  dangerButtonClass,
+  formFieldClass,
+  formLabelClass,
+  primaryButtonClass,
+  secondaryButtonClass,
+  textInputClass,
+  textareaClass,
+} from '../../styles/tailwindClasses.js'
 
 const initialFormData = {
   name: '',
@@ -197,7 +221,7 @@ function AdminMessagesManager({ onDataChange }) {
   }
 
   return (
-    <section className="admin-module">
+    <section className={adminModuleClass}>
       <AdminSectionHeader
         eyebrow="CRUD de mensajes"
         title="Bandeja de contacto conectada a la tabla real."
@@ -205,7 +229,7 @@ function AdminMessagesManager({ onDataChange }) {
         actions={
           <button
             type="button"
-            className="secondary-button"
+            className={secondaryButtonClass}
             onClick={handleCreateNew}
           >
             Nuevo mensaje
@@ -216,35 +240,33 @@ function AdminMessagesManager({ onDataChange }) {
       <AdminStatusBanner type="error" message={viewState.error} />
       <AdminStatusBanner type="success" message={viewState.success} />
 
-      <div className="admin-resource-grid">
-        <div className="admin-resource-panel">
-          <div className="admin-panel-heading">
+      <div className={adminResourceGridClass}>
+        <div className={adminPanelClass}>
+          <div className={adminPanelHeadingClass}>
             <h3>Bandeja</h3>
-            <span>{viewState.isLoading ? 'Cargando...' : messages.length}</span>
+            <span className={adminPanelHeadingMetaClass}>
+              {viewState.isLoading ? 'Cargando...' : messages.length}
+            </span>
           </div>
 
           {messages.length === 0 && !viewState.isLoading ? (
-            <div className="admin-empty-state">
-              <p>No hay mensajes registrados todavia.</p>
+            <div className={adminEmptyStateClass}>
+              <p className="m-0">No hay mensajes registrados todavia.</p>
             </div>
           ) : (
-            <div className="admin-record-list">
+            <div className={adminRecordListClass}>
               {messages.map((message) => (
                 <button
                   key={message.id}
                   type="button"
-                  className={`admin-record-card${
-                    selectedMessageId === message.id
-                      ? ' admin-record-card-active'
-                      : ''
-                  }`}
+                  className={adminRecordCardClass(selectedMessageId === message.id)}
                   onClick={() => startEditing(message)}
                 >
-                  <div className="admin-record-main">
+                  <div className={adminRecordMainClass}>
                     <strong>{message.name}</strong>
-                    <p>{message.email}</p>
+                    <p className={adminRecordSummaryClass}>{message.email}</p>
                   </div>
-                  <div className="admin-record-meta">
+                  <div className={adminRecordMetaClass}>
                     <span>
                       {message.read ? 'Leido' : 'Pendiente'} ·{' '}
                       {formatAdminDateTime(message.send_at)}
@@ -257,18 +279,21 @@ function AdminMessagesManager({ onDataChange }) {
           )}
         </div>
 
-        <div className="admin-resource-panel">
-          <div className="admin-panel-heading">
+        <div className={adminPanelClass}>
+          <div className={adminPanelHeadingClass}>
             <h3>{selectedMessageId ? 'Editar mensaje' : 'Nuevo mensaje'}</h3>
-            {selectedMessageId ? <span>ID #{selectedMessageId}</span> : null}
+            {selectedMessageId ? (
+              <span className={adminPanelHeadingMetaClass}>ID #{selectedMessageId}</span>
+            ) : null}
           </div>
 
-          <form className="admin-form" onSubmit={handleSubmit}>
-            <div className="admin-input-grid admin-input-grid-two">
-              <label className="form-field" htmlFor="message-name">
-                <span className="form-label">Nombre</span>
+          <form className={adminFormClass} onSubmit={handleSubmit}>
+            <div className={adminInputGridTwoClass}>
+              <label className={formFieldClass} htmlFor="message-name">
+                <span className={formLabelClass}>Nombre</span>
                 <input
                   id="message-name"
+                  className={textInputClass}
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
@@ -277,10 +302,11 @@ function AdminMessagesManager({ onDataChange }) {
                 />
               </label>
 
-              <label className="form-field" htmlFor="message-email">
-                <span className="form-label">Email</span>
+              <label className={formFieldClass} htmlFor="message-email">
+                <span className={formLabelClass}>Email</span>
                 <input
                   id="message-email"
+                  className={textInputClass}
                   name="email"
                   type="email"
                   value={formData.email}
@@ -291,10 +317,11 @@ function AdminMessagesManager({ onDataChange }) {
               </label>
             </div>
 
-            <label className="form-field" htmlFor="message-body">
-              <span className="form-label">Mensaje</span>
+            <label className={formFieldClass} htmlFor="message-body">
+              <span className={formLabelClass}>Mensaje</span>
               <textarea
                 id="message-body"
+                className={textareaClass}
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
@@ -305,9 +332,10 @@ function AdminMessagesManager({ onDataChange }) {
             </label>
 
             {selectedMessageId ? (
-              <label className="admin-checkbox-row" htmlFor="message-read">
+              <label className={adminCheckboxRowClass} htmlFor="message-read">
                 <input
                   id="message-read"
+                  className="h-[18px] w-[18px]"
                   name="read"
                   type="checkbox"
                   checked={formData.read}
@@ -317,15 +345,15 @@ function AdminMessagesManager({ onDataChange }) {
               </label>
             ) : null}
 
-            <div className="admin-form-actions">
-              <button type="submit" className="primary-button">
+            <div className={adminFormActionsClass}>
+              <button type="submit" className={primaryButtonClass}>
                 {selectedMessageId ? 'Guardar cambios' : 'Crear mensaje'}
               </button>
 
               {selectedMessageId ? (
                 <button
                   type="button"
-                  className="auth-link auth-link-danger"
+                  className={dangerButtonClass}
                   onClick={handleDelete}
                 >
                   Eliminar
