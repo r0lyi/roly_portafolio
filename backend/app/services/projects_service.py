@@ -7,6 +7,7 @@ from app.models.project_image import ProjectImage
 from app.models.technology import Technology
 from app.schemas.project import ProjectCreate, ProjectUpdate
 from app.schemas.project_image import ProjectImageCreate, ProjectImageUpdate
+from app.utils.asset_paths import normalize_public_asset_path
 
 PROJECT_LOAD_OPTIONS = (
     selectinload(Project.technologies),
@@ -98,7 +99,9 @@ def get_project_image_or_404(db: Session, project_id: int, image_id: int) -> Pro
 def create_project_image(db: Session, project_id: int, payload: ProjectImageCreate) -> ProjectImage:
     get_project_or_404(db, project_id)
 
-    image = ProjectImage(project_id=project_id, **payload.model_dump())
+    image_data = payload.model_dump()
+    image_data["image_url"] = normalize_public_asset_path(image_data["image_url"])
+    image = ProjectImage(project_id=project_id, **image_data)
     db.add(image)
     db.commit()
     db.refresh(image)
@@ -114,6 +117,8 @@ def update_project_image(
     image = get_project_image_or_404(db, project_id, image_id)
 
     for field, value in payload.model_dump(exclude_unset=True).items():
+        if field == "image_url" and value is not None:
+            value = normalize_public_asset_path(value)
         setattr(image, field, value)
 
     db.commit()
@@ -152,6 +157,7 @@ def _build_project_images(images: list[ProjectImageCreate | dict] | None) -> lis
     project_images: list[ProjectImage] = []
     for image in images:
         image_data = image.model_dump() if hasattr(image, "model_dump") else image
+        image_data["image_url"] = normalize_public_asset_path(image_data["image_url"])
         project_images.append(ProjectImage(**image_data))
 
     return project_images

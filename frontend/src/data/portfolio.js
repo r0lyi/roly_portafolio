@@ -2,7 +2,7 @@ export const portfolioData = {
   profile: {
     name: 'Roly',
     brand: 'ROLY_ENGINE',
-    role: 'Full-stack engineer',
+    role: 'Desarrollador Fullstack',
     headline: 'Creando sistemas digitales que escalan con intención.',
     heroTitleLead: 'CREANDO',
     heroTitleAccent: 'SISTEMAS',
@@ -15,16 +15,16 @@ export const portfolioData = {
     socialLinks: [
       {
         label: 'GitHub',
-        href: 'https://github.com/tu-usuario',
+        href: 'https://github.com/r0lyi',
       },
       {
         label: 'LinkedIn',
-        href: 'https://www.linkedin.com/in/tu-perfil',
+        href: 'https://www.linkedin.com/in/roly-silvestre-5242b0329',
       },
     ],
   },
   about: {
-    label: 'WHO_AM_I?',
+    label: '¿QUIÉN SOY?',
     headline:
       'CREO EN LA ESTRUCTURA, LA HONESTIDAD Y EL RENDIMIENTO. MI PROCESO ES TÉCNICO, MI DISEÑO ES CONTUNDENTE Y MI CÓDIGO ES LIMPIO.',
     body:

@@ -34,6 +34,10 @@ import {
   secondaryButtonClass,
   textInputClass,
 } from '../../styles/tailwindClasses.js'
+import {
+  normalizeImageAssetPath,
+  resolveImageAssetUrl,
+} from '../../utils/resolveImageAssetUrl.js'
 
 const initialFormData = {
   image_url: '',
@@ -42,7 +46,7 @@ const initialFormData = {
 
 function mapImageToForm(image) {
   return {
-    image_url: image.image_url ?? '',
+    image_url: normalizeImageAssetPath(image.image_url ?? ''),
     position:
       image.position === null || image.position === undefined
         ? '0'
@@ -194,7 +198,7 @@ function AdminProjectImagesManager({ onDataChange }) {
     if (!formData.image_url.trim()) {
       setViewState((currentState) => ({
         ...currentState,
-        error: 'La URL de la imagen es obligatoria.',
+        error: 'La ruta de la imagen es obligatoria.',
         success: '',
       }))
       return
@@ -202,7 +206,7 @@ function AdminProjectImagesManager({ onDataChange }) {
 
     try {
       const payload = {
-        image_url: formData.image_url.trim(),
+        image_url: normalizeImageAssetPath(formData.image_url),
         position:
           formData.position === '' || Number.isNaN(Number(formData.position))
             ? 0
@@ -323,12 +327,12 @@ function AdminProjectImagesManager({ onDataChange }) {
                     onClick={() => startEditing(image)}
                   >
                     <div className={adminImagePreviewClass}>
-                      <img src={image.image_url} alt="" />
+                      <img src={resolveImageAssetUrl(image.image_url)} alt="" />
                     </div>
                     <div className={adminRecordMainClass}>
                       <strong>Imagen #{image.id}</strong>
                       <p className={adminRecordSummaryClass}>
-                        {createExcerpt(image.image_url, 60)}
+                        {createExcerpt(normalizeImageAssetPath(image.image_url), 60)}
                       </p>
                     </div>
                     <div className={adminRecordMetaClass}>
@@ -350,16 +354,20 @@ function AdminProjectImagesManager({ onDataChange }) {
 
             <form className={adminFormClass} onSubmit={handleSubmit}>
               <label className={formFieldClass} htmlFor="project-image-url">
-                <span className={formLabelClass}>URL de imagen</span>
+                <span className={formLabelClass}>Ruta de imagen</span>
                 <input
                   id="project-image-url"
                   className={textInputClass}
                   name="image_url"
                   value={formData.image_url}
                   onChange={handleChange}
-                  placeholder="https://..."
+                  placeholder="proyectos/mi-captura.webp"
                   required
                 />
+                <span className="text-xs leading-5 text-[#5f7881]">
+                  Guarda la imagen en `frontend/public/img` y escribe el nombre,
+                  `img/...`, `public/img/...` o `/img/...`.
+                </span>
               </label>
 
               <label className={formFieldClass} htmlFor="project-image-position">

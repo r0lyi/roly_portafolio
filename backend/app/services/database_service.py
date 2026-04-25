@@ -15,6 +15,7 @@ def init_db() -> None:
     _load_models()
     Base.metadata.create_all(bind=engine)
     _migrate_project_images()
+    _migrate_technologies_table()
     _migrate_users_table()
     _ensure_default_admin()
 
@@ -57,6 +58,22 @@ def _migrate_project_images() -> None:
             )
         )
         connection.execute(text("ALTER TABLE project DROP COLUMN image_url"))
+
+
+def _migrate_technologies_table() -> None:
+    inspector = inspect(engine)
+    table_names = inspector.get_table_names()
+
+    if "technology" not in table_names:
+        return
+
+    technology_columns = {column["name"] for column in inspector.get_columns("technology")}
+
+    if "img_url" in technology_columns:
+        return
+
+    with engine.begin() as connection:
+        connection.execute(text("ALTER TABLE technology ADD COLUMN img_url TEXT"))
 
 
 def _migrate_users_table() -> None:

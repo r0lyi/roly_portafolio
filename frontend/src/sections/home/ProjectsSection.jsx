@@ -1,8 +1,22 @@
 import { portfolioData } from '../../data/portfolio.js'
+import { resolveImageAssetUrl } from '../../utils/resolveImageAssetUrl.js'
 
-function ProjectVisual({ variant }) {
+function ProjectVisual({ variant, imageUrl, title }) {
   const baseClassName =
     'relative aspect-[16/11] overflow-hidden border-b-[4px] border-[#101010] bg-[#101010]'
+
+  if (imageUrl) {
+    return (
+      <div className={baseClassName}>
+        <img
+          className="h-full w-full object-cover"
+          src={resolveImageAssetUrl(imageUrl)}
+          alt={`Vista previa de ${title}`}
+          loading="lazy"
+        />
+      </div>
+    )
+  }
 
   if (variant === 'portrait') {
     return (
@@ -69,7 +83,11 @@ function ProjectsSection() {
               key={project.title}
               className="grid grid-rows-[auto_1fr] overflow-hidden border-[4px] border-[#101010] bg-[#fffef8] shadow-[8px_8px_0_rgba(16,16,16,0.16)] max-[640px]:shadow-[6px_6px_0_rgba(16,16,16,0.16)]"
             >
-              <ProjectVisual variant={project.visual} />
+              <ProjectVisual
+                variant={project.visual}
+                imageUrl={project.imageUrl}
+                title={project.title}
+              />
 
               <div className="grid content-start gap-[14px] p-4 pb-3 max-[640px]:p-[14px] max-[640px]:pb-[10px]">
                 <h3 className="m-0 font-['Manrope'] text-[clamp(1.45rem,2vw,1.9rem)] font-black uppercase leading-[0.96] tracking-[-0.05em] text-[#101010] max-[640px]:text-[1.65rem]">

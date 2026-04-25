@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.models.technology import Technology
 from app.schemas.technology import TechnologyCreate, TechnologyUpdate
+from app.utils.asset_paths import normalize_public_asset_path
 
 
 def list_technologies(db: Session) -> list[Technology]:
@@ -19,7 +20,11 @@ def get_technology_or_404(db: Session, technology_id: int) -> Technology:
 
 
 def create_technology(db: Session, payload: TechnologyCreate) -> Technology:
-    technology = Technology(**payload.model_dump())
+    technology_data = payload.model_dump()
+    technology_data["img_url"] = normalize_public_asset_path(
+        technology_data.get("img_url"),
+    ) or None
+    technology = Technology(**technology_data)
     db.add(technology)
     db.commit()
     db.refresh(technology)
@@ -30,6 +35,8 @@ def update_technology(db: Session, technology_id: int, payload: TechnologyUpdate
     technology = get_technology_or_404(db, technology_id)
 
     for field, value in payload.model_dump(exclude_unset=True).items():
+        if field == "img_url":
+            value = normalize_public_asset_path(value) or None
         setattr(technology, field, value)
 
     db.commit()

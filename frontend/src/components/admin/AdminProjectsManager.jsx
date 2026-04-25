@@ -13,6 +13,7 @@ import {
   formatAdminDateTime,
 } from '../../utils/formatAdminValue.js'
 import { getApiErrorMessage } from '../../utils/getApiErrorMessage.js'
+import { normalizeImageAssetPath } from '../../utils/resolveImageAssetUrl.js'
 import {
   adminChipGridClass,
   adminChipOptionClass,
@@ -62,7 +63,7 @@ function createImageRow(image = {}) {
   return {
     clientId: image.id ? `image-${image.id}` : createClientId(),
     id: image.id ?? null,
-    image_url: image.image_url ?? '',
+    image_url: normalizeImageAssetPath(image.image_url ?? ''),
     position:
       image.position === null || image.position === undefined
         ? '0'
@@ -91,7 +92,7 @@ function buildProjectPayload(formData) {
     images: formData.images
       .filter((image) => image.image_url.trim())
       .map((image, index) => ({
-        image_url: image.image_url.trim(),
+        image_url: normalizeImageAssetPath(image.image_url),
         position:
           image.position === '' || Number.isNaN(Number(image.position))
             ? index
@@ -456,6 +457,12 @@ function AdminProjectsManager({ onDataChange }) {
                 </button>
               </div>
 
+              <p className="m-0 text-sm leading-6 text-[#5f7881]">
+                Las imagenes locales se sirven desde `frontend/public/img`. Puedes
+                escribir `capturas/app.webp`, `img/capturas/app.webp`,
+                `public/img/capturas/app.webp` o la ruta final `/img/...`.
+              </p>
+
               {formData.images.length === 0 ? (
                 <div className={adminEmptyStateClass}>
                   <p className="m-0">
@@ -477,7 +484,7 @@ function AdminProjectsManager({ onDataChange }) {
                             event.target.value,
                           )
                         }
-                        placeholder="https://..."
+                        placeholder="capturas/app.webp"
                       />
                       <input
                         className={textInputClass}

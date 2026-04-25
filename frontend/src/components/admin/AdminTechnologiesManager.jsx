@@ -12,6 +12,7 @@ import {
   adminEmptyStateClass,
   adminFormActionsClass,
   adminFormClass,
+  adminImagePreviewClass,
   adminInputGridTwoClass,
   adminModuleClass,
   adminPanelClass,
@@ -30,9 +31,14 @@ import {
   secondaryButtonClass,
   textInputClass,
 } from '../../styles/tailwindClasses.js'
+import {
+  normalizeImageAssetPath,
+  resolveImageAssetUrl,
+} from '../../utils/resolveImageAssetUrl.js'
 
 const initialFormData = {
   name: '',
+  img_url: '',
   group: '',
   order: '',
 }
@@ -40,6 +46,7 @@ const initialFormData = {
 function mapTechnologyToForm(technology) {
   return {
     name: technology.name ?? '',
+    img_url: normalizeImageAssetPath(technology.img_url ?? ''),
     group: technology.group ?? '',
     order:
       technology.order === null || technology.order === undefined
@@ -51,6 +58,7 @@ function mapTechnologyToForm(technology) {
 function buildTechnologyPayload(formData) {
   return {
     name: formData.name.trim(),
+    img_url: normalizeImageAssetPath(formData.img_url) || null,
     group: formData.group.trim() || null,
     order:
       formData.order === '' || Number.isNaN(Number(formData.order))
@@ -235,7 +243,7 @@ function AdminTechnologiesManager({ onDataChange }) {
       <AdminSectionHeader
         eyebrow="CRUD de tecnologias"
         title="Stack tecnico reutilizable para proyectos."
-        description="Administra nombres, grupos y orden de aparicion para relacionarlos despues con cada proyecto."
+        description="Administra nombres, logos, grupos y orden de aparicion para relacionarlos despues con cada proyecto."
         actions={
           <button
             type="button"
@@ -274,6 +282,15 @@ function AdminTechnologiesManager({ onDataChange }) {
                   )}
                   onClick={() => startEditing(technology)}
                 >
+                  {technology.img_url ? (
+                    <div className={adminImagePreviewClass}>
+                      <img
+                        className="h-full w-full object-contain p-5"
+                        src={resolveImageAssetUrl(technology.img_url)}
+                        alt=""
+                      />
+                    </div>
+                  ) : null}
                   <div className={adminRecordMainClass}>
                     <strong>{technology.name}</strong>
                     <p className={adminRecordSummaryClass}>
@@ -282,6 +299,9 @@ function AdminTechnologiesManager({ onDataChange }) {
                   </div>
                   <div className={adminRecordMetaClass}>
                     <span>Orden: {technology.order ?? 'N/D'}</span>
+                    <span>
+                      Logo: {technology.img_url ? normalizeImageAssetPath(technology.img_url) : 'Sin logo'}
+                    </span>
                     <span>ID #{technology.id}</span>
                   </div>
                 </button>
@@ -327,6 +347,32 @@ function AdminTechnologiesManager({ onDataChange }) {
                 />
               </label>
             </div>
+
+            <label className={formFieldClass} htmlFor="technology-img-url">
+              <span className={formLabelClass}>Ruta del logo</span>
+              <input
+                id="technology-img-url"
+                className={textInputClass}
+                name="img_url"
+                value={formData.img_url}
+                onChange={handleChange}
+                placeholder="logos/react.svg"
+              />
+              <span className="text-xs leading-5 text-[#5f7881]">
+                Guarda el archivo en `frontend/public/img` y escribe el nombre,
+                `img/...`, `public/img/...` o `/img/...`.
+              </span>
+            </label>
+
+            {formData.img_url ? (
+              <div className={adminImagePreviewClass}>
+                <img
+                  className="h-full w-full object-contain p-5"
+                  src={resolveImageAssetUrl(formData.img_url)}
+                  alt=""
+                />
+              </div>
+            ) : null}
 
             <label className={formFieldClass} htmlFor="technology-order">
               <span className={formLabelClass}>Orden</span>

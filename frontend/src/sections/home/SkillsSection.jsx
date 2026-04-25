@@ -1,4 +1,5 @@
 import { portfolioData } from '../../data/portfolio.js'
+import { resolveImageAssetUrl } from '../../utils/resolveImageAssetUrl.js'
 
 function SystemStackIcon({ icon }) {
   const iconClassName = 'h-[42px] w-[42px]'
@@ -109,6 +110,23 @@ function SystemStackIcon({ icon }) {
   }
 }
 
+function TechnologyLogo({ item }) {
+  const imageUrl = item.imgUrl ?? item.img_url ?? ''
+
+  if (imageUrl) {
+    return (
+      <img
+        className="h-[42px] w-[42px] object-contain"
+        src={resolveImageAssetUrl(imageUrl)}
+        alt=""
+        loading="lazy"
+      />
+    )
+  }
+
+  return <SystemStackIcon icon={item.icon} />
+}
+
 function SkillsSection() {
   const { systemStack } = portfolioData
 
@@ -131,7 +149,7 @@ function SkillsSection() {
               className="grid min-h-[116px] content-center justify-items-center gap-3 border-[4px] border-[#101010] bg-[#fffef8] px-[10px] py-[14px] text-center shadow-[6px_6px_0_rgba(16,16,16,0.16)] max-[640px]:min-h-[104px]"
             >
               <div className="grid h-11 w-11 place-items-center text-[#161616]">
-                <SystemStackIcon icon={item.icon} />
+                <TechnologyLogo item={item} />
               </div>
               <p className="m-0 text-[0.92rem] font-black uppercase leading-[1.1] tracking-[-0.02em] text-[#202020]">
                 {item.label}
