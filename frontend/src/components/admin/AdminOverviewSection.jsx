@@ -4,9 +4,7 @@ import AdminStatusBanner from './AdminStatusBanner.jsx'
 import {
   adminLinkButtonClass,
   adminModuleClass,
-  cardBodyClass,
-  cardMetaClass,
-  contentCardClass,
+  adminPanelClass,
   secondaryButtonClass,
 } from '../../styles/tailwindClasses.js'
 
@@ -75,15 +73,16 @@ function AdminOverviewSection({
 
       <div className="grid gap-[18px] md:grid-cols-2 xl:grid-cols-3">
         {overviewCards.map((card) => (
-          <article
-            key={card.key}
-            className="rounded-[32px] border border-[rgba(21,39,48,0.12)] bg-[rgba(255,255,255,0.76)] p-6 backdrop-blur-[16px]"
-          >
-            <p className={cardMetaClass}>{card.label}</p>
-            <h3 className="mt-2 text-[clamp(2rem,5vw,2.8rem)] font-semibold text-[#112029]">
+          <article key={card.key} className={`${adminPanelClass} grid gap-3 bg-[#fffef8]`}>
+            <p className="m-0 text-[0.76rem] font-black uppercase tracking-[0.1em] text-[#101010]">
+              {card.label}
+            </p>
+            <h3 className="m-0 font-['Manrope'] text-[clamp(2.4rem,7vw,3.6rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.06em] text-[#101010]">
               {isLoading ? '...' : stats[card.key]}
             </h3>
-            <p className={cardBodyClass}>{card.helper}</p>
+            <p className="m-0 text-[0.98rem] font-bold leading-[1.6] text-[#323232]">
+              {card.helper}
+            </p>
             <button
               type="button"
               className={`mt-3 ${adminLinkButtonClass}`}
@@ -96,32 +95,40 @@ function AdminOverviewSection({
       </div>
 
       <div className="grid gap-[18px] md:grid-cols-2 xl:grid-cols-3">
-        <article className={contentCardClass}>
-          <p className={cardMetaClass}>Sesion autenticada</p>
-          <h3 className="mt-[10px] text-[1.18rem] font-semibold text-[#112029]">{userEmail}</h3>
-          <p className={cardBodyClass}>
+        <article className={`${adminPanelClass} grid gap-3 bg-[#fffef8]`}>
+          <p className="m-0 text-[0.76rem] font-black uppercase tracking-[0.1em] text-[#101010]">
+            Sesion autenticada
+          </p>
+          <h3 className="m-0 break-all font-['Manrope'] text-[1.35rem] font-extrabold uppercase leading-[1.05] tracking-[-0.04em] text-[#101010]">
+            {userEmail}
+          </h3>
+          <p className="m-0 text-[0.98rem] font-bold leading-[1.6] text-[#323232]">
             El panel trabaja con la autenticacion del backend y reutiliza la
             capa `axios` ya conectada.
           </p>
         </article>
 
-        <article className={contentCardClass}>
-          <p className={cardMetaClass}>Cobertura del panel</p>
-          <h3 className="mt-[10px] text-[1.18rem] font-semibold text-[#112029]">
+        <article className={`${adminPanelClass} grid gap-3 bg-[#fffef8]`}>
+          <p className="m-0 text-[0.76rem] font-black uppercase tracking-[0.1em] text-[#101010]">
+            Cobertura del panel
+          </p>
+          <h3 className="m-0 font-['Manrope'] text-[1.35rem] font-extrabold uppercase leading-[1.05] tracking-[-0.04em] text-[#101010]">
             CRUD funcional sobre recursos reales.
           </h3>
-          <p className={cardBodyClass}>
+          <p className="m-0 text-[0.98rem] font-bold leading-[1.6] text-[#323232]">
             Proyectos, imagenes, tecnologias, experiencias y mensajes ya se
             gestionan consumiendo la API del backend.
           </p>
         </article>
 
-        <article className={contentCardClass}>
-          <p className={cardMetaClass}>Cuenta admin</p>
-          <h3 className="mt-[10px] text-[1.18rem] font-semibold text-[#112029]">
+        <article className={`${adminPanelClass} grid gap-3 bg-[#fffef8]`}>
+          <p className="m-0 text-[0.76rem] font-black uppercase tracking-[0.1em] text-[#101010]">
+            Cuenta admin
+          </p>
+          <h3 className="m-0 font-['Manrope'] text-[1.35rem] font-extrabold uppercase leading-[1.05] tracking-[-0.04em] text-[#101010]">
             Controlada por una politica de un unico usuario.
           </h3>
-          <p className={cardBodyClass}>
+          <p className="m-0 text-[0.98rem] font-bold leading-[1.6] text-[#323232]">
             La cuenta del sistema se puede editar desde el panel, pero el
             backend sigue restringiendo el numero de administradores.
           </p>

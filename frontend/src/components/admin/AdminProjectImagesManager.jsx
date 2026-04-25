@@ -364,7 +364,7 @@ function AdminProjectImagesManager({ onDataChange }) {
                   placeholder="proyectos/mi-captura.webp"
                   required
                 />
-                <span className="text-xs leading-5 text-[#5f7881]">
+                <span className="text-xs font-bold uppercase leading-5 tracking-[0.04em] text-[#3c3c3c]">
                   Guarda la imagen en `frontend/public/img` y escribe el nombre,
                   `img/...`, `public/img/...` o `/img/...`.
                 </span>

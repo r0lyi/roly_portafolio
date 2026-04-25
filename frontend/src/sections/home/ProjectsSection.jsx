@@ -1,7 +1,8 @@
 import { portfolioData } from '../../data/portfolio.js'
+import HomeSectionStateCard from '../../components/ui/HomeSectionStateCard.jsx'
 import { resolveImageAssetUrl } from '../../utils/resolveImageAssetUrl.js'
 
-function ProjectVisual({ variant, imageUrl, title }) {
+function ProjectVisual({ imageUrl, title }) {
   const baseClassName =
     'relative aspect-[16/11] overflow-hidden border-b-[4px] border-[#101010] bg-[#101010]'
 
@@ -18,54 +19,103 @@ function ProjectVisual({ variant, imageUrl, title }) {
     )
   }
 
-  if (variant === 'portrait') {
-    return (
-      <div
-        className={`${baseClassName} [background:radial-gradient(circle_at_34%_38%,rgba(173,255,202,0.12),transparent_20%),linear-gradient(90deg,#161d16_0%,#050505_100%)]`}
-        aria-hidden="true"
-      >
-        <div className="absolute inset-0">
-          <span className="absolute bottom-[34%] left-[26%] aspect-[1/1.18] w-[26%] rounded-[46%_46%_52%_52%/_40%_40%_54%_54%] bg-[linear-gradient(180deg,#e7c7b3_0%,#d5a483_100%)] shadow-[inset_0_-10px_18px_rgba(0,0,0,0.16),0_0_40px_rgba(255,255,255,0.08)] before:absolute before:inset-[-10%_-3%_46%_-3%] before:rounded-[48%_48%_22%_22%] before:bg-[#1a1a1a] before:content-['']" />
-          <span className="absolute bottom-[28%] left-[36%] h-[8%] w-[7%] rounded-b-[12px] bg-[#c89271]" />
-          <span className="absolute bottom-[-10%] left-[18%] h-[48%] w-[48%] rounded-[42%_42%_0_0] bg-[#24262a] [background-image:linear-gradient(180deg,rgba(255,255,255,0.1),transparent_25%)]" />
-        </div>
-      </div>
-    )
-  }
-
-  if (variant === 'vault') {
-    return (
-      <div
-        className={`${baseClassName} [background:radial-gradient(circle_at_50%_4%,rgba(255,255,255,0.9),transparent_12%),linear-gradient(180deg,#14221c_0%,#050505_66%)]`}
-        aria-hidden="true"
-      >
-        <div className="absolute inset-0">
-          <span className="absolute left-1/2 top-[2%] aspect-square w-[18%] -translate-x-1/2 rounded-[999px] [background:radial-gradient(circle,rgba(255,255,255,1)_0%,rgba(244,255,249,0.2)_62%,transparent_70%)]" />
-          <span className="absolute bottom-[16%] left-1/2 h-[54%] w-[24%] -translate-x-1/2 rounded-[18px_18px_10px_10px] bg-[#050505] [background-image:linear-gradient(180deg,rgba(255,255,255,0.14),transparent_18%),linear-gradient(180deg,#111_0%,#050505_100%)] shadow-[0_0_40px_rgba(182,255,217,0.08),inset_0_0_22px_rgba(255,255,255,0.06)] before:absolute before:bottom-[-2%] before:left-[-18%] before:h-[34%] before:w-[38%] before:rounded-[999px_999px_0_0] before:bg-[#080808] before:content-[''] after:absolute after:bottom-[-2%] after:right-[-18%] after:h-[34%] after:w-[38%] after:rounded-[999px_999px_0_0] after:bg-[#080808] after:content-['']" />
-          <span className="absolute bottom-[10%] left-[8%] right-[8%] h-[2px] [background:linear-gradient(90deg,transparent_0%,rgba(196,255,223,0.24)_18%,rgba(196,255,223,0.24)_82%,transparent_100%)]" />
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div
-      className={`${baseClassName} [background:radial-gradient(circle_at_56%_28%,rgba(255,255,255,0.12),transparent_24%),linear-gradient(180deg,#1a1b1f_0%,#0d0d0f_100%)]`}
+      className={`${baseClassName} [background:radial-gradient(circle_at_top_left,rgba(255,255,255,0.18),transparent_24%),linear-gradient(135deg,#101820_0%,#143941_58%,#2e6558_100%)]`}
       aria-hidden="true"
     >
-      <div className="absolute inset-0">
-        <span className="absolute left-1/2 top-[12%] aspect-square w-[14%] -translate-x-1/2 rounded-[999px] bg-[linear-gradient(180deg,#f0c8ab_0%,#dea280_100%)]" />
-        <span className="absolute bottom-0 left-1/2 h-[62%] w-[34%] -translate-x-1/2 rounded-t-[28px] bg-[#a9ccee] [background-image:linear-gradient(180deg,rgba(255,255,255,0.2),transparent_22%)] before:absolute before:bottom-0 before:left-[-16%] before:h-[58%] before:w-[24%] before:rounded-tl-[22px] before:bg-[#9bc2e6] before:content-[''] after:absolute after:bottom-0 after:right-[-16%] after:h-[58%] after:w-[24%] after:rounded-tr-[22px] after:bg-[#9bc2e6] after:content-['']" />
-        <span className="absolute left-1/2 top-[28%] -translate-x-1/2 text-[clamp(2.4rem,4.6vw,4rem)] font-black leading-none text-[rgba(80,110,140,0.44)]">
-          3
+      <span className="absolute inset-0 [background:linear-gradient(120deg,transparent_0%,rgba(255,255,255,0.08)_42%,transparent_100%)]" />
+      <div className="absolute inset-x-5 bottom-5 grid gap-2">
+        <span className="w-fit border-[2px] border-[rgba(255,255,255,0.28)] px-2 py-1 text-[0.65rem] font-black uppercase tracking-[0.18em] text-white/80">
+          Sin preview
         </span>
+        <p className="m-0 max-w-[12ch] font-['Manrope'] text-[clamp(1.4rem,3vw,2rem)] font-extrabold uppercase leading-[0.92] tracking-[-0.05em] text-white">
+          {title}
+        </p>
       </div>
     </div>
   )
 }
 
-function ProjectsSection() {
-  const { selectedWorks, projects } = portfolioData
+function ProjectActions({ links, statusLabel }) {
+  if (links.length === 0) {
+    return (
+      <div className="mt-auto inline-flex w-full items-center justify-center border-[3px] border-[#101010] bg-[#ece7d6] px-4 py-[0.88rem] text-[0.88rem] font-black uppercase tracking-[0.04em] text-[#505050]">
+        {statusLabel}
+      </div>
+    )
+  }
+
+  if (links.length === 1) {
+    const [link] = links
+
+    return (
+      <a
+        className={`mt-auto inline-flex w-full items-center justify-center gap-2.5 border-[4px] border-[#101010] px-4 py-[0.82rem] font-black uppercase tracking-[-0.02em] text-[#101010] transition duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[8px_8px_0_#101010] ${
+          link.tone === 'primary' ? 'bg-[#18ff48]' : 'bg-white'
+        }`}
+        href={link.href}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <span>{link.label}</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    )
+  }
+
+  return (
+    <div className="mt-auto grid gap-3 min-[460px]:grid-cols-2">
+      {links.map((link) => (
+        <a
+          key={`${link.label}-${link.href}`}
+          className={`inline-flex w-full items-center justify-center gap-2.5 border-[4px] border-[#101010] px-4 py-[0.82rem] font-black uppercase tracking-[-0.02em] text-[#101010] transition duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[8px_8px_0_#101010] ${
+            link.tone === 'primary' ? 'bg-[#18ff48]' : 'bg-white'
+          }`}
+          href={link.href}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <span>{link.label}</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      ))}
+    </div>
+  )
+}
+
+function ProjectsLoadingState() {
+  return (
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4 max-[960px]:grid-cols-2 max-[640px]:grid-cols-1">
+      {Array.from({ length: 3 }, (_, index) => (
+        <div
+          key={`project-skeleton-${index}`}
+          className="overflow-hidden border-[4px] border-[#101010] bg-[#fffef8] shadow-[8px_8px_0_rgba(16,16,16,0.12)]"
+        >
+          <div className="aspect-[16/11] animate-pulse border-b-[4px] border-[#101010] bg-[linear-gradient(135deg,#e6e1d3_0%,#d7d1bf_100%)]" />
+          <div className="grid gap-4 p-4">
+            <div className="h-4 w-24 animate-pulse bg-[#d8d0bc]" />
+            <div className="h-10 w-2/3 animate-pulse bg-[#d8d0bc]" />
+            <div className="h-20 animate-pulse bg-[#eee8d7]" />
+            <div className="flex flex-wrap gap-2">
+              {Array.from({ length: 3 }, (_, tagIndex) => (
+                <span
+                  key={`project-skeleton-tag-${tagIndex}`}
+                  className="h-7 w-20 animate-pulse bg-[#ece5d0]"
+                />
+              ))}
+            </div>
+            <div className="h-12 animate-pulse bg-[#d8d0bc]" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function ProjectsSection({ projectsState }) {
+  const { selectedWorks } = portfolioData
+  const dynamicProjects = projectsState?.data ?? []
 
   return (
     <section id="projects" className="border-t-[4px] border-[#101010] bg-[#f2f0e8] py-[84px] max-[640px]:py-14">
@@ -77,52 +127,78 @@ function ProjectsSection() {
           <span className="block h-1 bg-[#101010]" aria-hidden="true" />
         </div>
 
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4 max-[960px]:grid-cols-2 max-[640px]:grid-cols-1">
-          {projects.map((project, index) => (
-            <article
-              key={project.title}
-              className="grid grid-rows-[auto_1fr] overflow-hidden border-[4px] border-[#101010] bg-[#fffef8] shadow-[8px_8px_0_rgba(16,16,16,0.16)] max-[640px]:shadow-[6px_6px_0_rgba(16,16,16,0.16)]"
-            >
-              <ProjectVisual
-                variant={project.visual}
-                imageUrl={project.imageUrl}
-                title={project.title}
-              />
+        {projectsState?.isLoading ? <ProjectsLoadingState /> : null}
 
-              <div className="grid content-start gap-[14px] p-4 pb-3 max-[640px]:p-[14px] max-[640px]:pb-[10px]">
-                <h3 className="m-0 font-['Manrope'] text-[clamp(1.45rem,2vw,1.9rem)] font-black uppercase leading-[0.96] tracking-[-0.05em] text-[#101010] max-[640px]:text-[1.65rem]">
-                  {project.title}
-                </h3>
-                <p className="m-0 text-[0.96rem] font-bold leading-[1.45] text-[#515151] max-[640px]:text-[0.9rem]">
-                  {project.description}
-                </p>
+        {!projectsState?.isLoading && projectsState?.error ? (
+          <HomeSectionStateCard
+            eyebrow="Error de sincronizacion"
+            title="No fue posible cargar los proyectos."
+            description={projectsState.error}
+            actionLabel="Reintentar"
+            onAction={projectsState.retry}
+          />
+        ) : null}
 
-                <ul className="m-0 flex flex-wrap gap-2 p-0" aria-label={`Stack de ${project.title}`}>
-                  {project.stack.map((tag) => (
-                    <li
-                      key={tag}
-                      className="list-none border-[2px] border-[#6f6f6f] px-[0.42rem] py-[0.24rem] text-[0.66rem] font-black uppercase leading-none text-[#4a4a4a]"
-                    >
-                      {tag}
-                    </li>
-                  ))}
-                </ul>
+        {!projectsState?.isLoading &&
+        !projectsState?.error &&
+        projectsState?.isEmpty ? (
+          <HomeSectionStateCard
+            eyebrow="Sin proyectos"
+            title="Todavia no hay proyectos publicados."
+            description="La seccion ya esta conectada al backend y mantendra su estructura en cuanto exista contenido real."
+          />
+        ) : null}
 
-                <a
-                  className={`mt-auto inline-flex w-full items-center justify-center gap-2.5 border-[4px] border-[#101010] px-4 py-[0.82rem] font-black uppercase tracking-[-0.02em] text-[#101010] transition duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[8px_8px_0_#101010] ${
-                    index === 0 ? 'bg-[#18ff48]' : 'bg-white'
-                  }`}
-                  href={project.repositoryUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <span>VIEW REPOSITORY</span>
-                  <span aria-hidden="true">↗</span>
-                </a>
-              </div>
-            </article>
-          ))}
-        </div>
+        {!projectsState?.isLoading &&
+        !projectsState?.error &&
+        !projectsState?.isEmpty ? (
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(290px,1fr))] gap-5 max-[960px]:grid-cols-2 max-[640px]:grid-cols-1">
+            {dynamicProjects.map((project) => (
+              <article
+                key={project.id}
+                className="grid grid-rows-[auto_1fr] overflow-hidden border-[4px] border-[#101010] bg-[#fffef8] shadow-[8px_8px_0_rgba(16,16,16,0.16)] max-[640px]:shadow-[6px_6px_0_rgba(16,16,16,0.16)]"
+              >
+                <ProjectVisual imageUrl={project.imageUrl} title={project.title} />
+
+                <div className="grid content-start gap-[14px] p-4 pb-3 max-[640px]:p-[14px] max-[640px]:pb-[12px]">
+                  {project.createdAtLabel ? (
+                    <p className="m-0 text-[0.72rem] font-black uppercase tracking-[0.16em] text-[#5b5b5b]">
+                      Publicado {project.createdAtLabel}
+                    </p>
+                  ) : null}
+
+                  <h3 className="m-0 font-['Manrope'] text-[clamp(1.55rem,2vw,2rem)] font-black uppercase leading-[0.96] tracking-[-0.05em] text-[#101010]">
+                    {project.title}
+                  </h3>
+
+                  <p className="m-0 text-[0.98rem] font-bold leading-[1.5] text-[#4f4f4f] max-[640px]:text-[0.92rem]">
+                    {project.description}
+                  </p>
+
+                  <ul className="m-0 flex flex-wrap gap-2 p-0" aria-label={`Stack de ${project.title}`}>
+                    {(project.stack.length > 0 ? project.stack : ['Sin stack']).map((tag) => (
+                      <li
+                        key={tag}
+                        className={`list-none border-[2px] px-[0.5rem] py-[0.28rem] text-[0.68rem] font-black uppercase leading-none ${
+                          tag === 'Sin stack'
+                            ? 'border-[#a6a6a6] text-[#707070]'
+                            : 'border-[#101010] text-[#101010]'
+                        }`}
+                      >
+                        {tag}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <ProjectActions
+                    links={project.links}
+                    statusLabel={project.statusLabel}
+                  />
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : null}
       </div>
     </section>
   )
