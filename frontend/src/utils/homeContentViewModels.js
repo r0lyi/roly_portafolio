@@ -139,13 +139,10 @@ export function mapExperiencesToViewModels(items) {
 }
 
 export function mapTechnologiesToViewModels(items) {
-  const groups = new Map()
-
-  normalizeCollection(items)
+  return normalizeCollection(items)
     .map((technology, index) => ({
       id: technology.id ?? index,
       name: normalizeText(technology.name) || `Stack ${index + 1}`,
-      groupLabel: normalizeText(technology.group) || 'General',
       imgUrl: normalizeText(technology.img_url),
       order: normalizeOrder(technology.order),
       index,
@@ -157,34 +154,10 @@ export function mapTechnologiesToViewModels(items) {
 
       return leftItem.name.localeCompare(rightItem.name, 'es')
     })
-    .forEach((technology) => {
-      const currentGroup = groups.get(technology.groupLabel) ?? {
-        groupLabel: technology.groupLabel,
-        sortOrder: technology.order,
-        items: [],
-      }
-
-      currentGroup.sortOrder = Math.min(currentGroup.sortOrder, technology.order)
-      currentGroup.items.push({
-        id: technology.id ?? `${technology.name}-${technology.index}`,
-        name: technology.name,
-        imgUrl: technology.imgUrl,
-        monogram: createMonogram(technology.name),
-      })
-
-      groups.set(technology.groupLabel, currentGroup)
-    })
-
-  return Array.from(groups.values())
-    .sort((leftGroup, rightGroup) => {
-      if (leftGroup.sortOrder !== rightGroup.sortOrder) {
-        return leftGroup.sortOrder - rightGroup.sortOrder
-      }
-
-      return leftGroup.groupLabel.localeCompare(rightGroup.groupLabel, 'es')
-    })
-    .map(({ groupLabel, items: itemsInGroup }) => ({
-      groupLabel,
-      items: itemsInGroup,
+    .map((technology) => ({
+      id: technology.id ?? `${technology.name}-${technology.index}`,
+      name: technology.name,
+      imgUrl: technology.imgUrl,
+      monogram: createMonogram(technology.name),
     }))
 }

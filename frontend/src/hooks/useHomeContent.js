@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { getExperiences } from '../services/api/experiences.js'
 import { getProjects } from '../services/api/projects.js'
 import { getTechnologies } from '../services/api/technologies.js'
@@ -33,7 +33,7 @@ function useHomeContent() {
   })
   const isMountedRef = useRef(true)
 
-  async function loadResource({
+  const loadResource = useCallback(async function loadResource({
     key,
     setState,
     fetcher,
@@ -72,9 +72,9 @@ function useHomeContent() {
         error: getApiErrorMessage(error, fallbackMessage),
       })
     }
-  }
+  }, [])
 
-  async function loadProjects() {
+  const loadProjects = useCallback(async function loadProjects() {
     await loadResource({
       key: 'projects',
       setState: setProjectsState,
@@ -82,9 +82,9 @@ function useHomeContent() {
       mapper: mapProjectsToViewModels,
       fallbackMessage: 'No se pudieron cargar los proyectos.',
     })
-  }
+  }, [loadResource])
 
-  async function loadExperiences() {
+  const loadExperiences = useCallback(async function loadExperiences() {
     await loadResource({
       key: 'experiences',
       setState: setExperiencesState,
@@ -92,9 +92,9 @@ function useHomeContent() {
       mapper: mapExperiencesToViewModels,
       fallbackMessage: 'No se pudieron cargar las experiencias.',
     })
-  }
+  }, [loadResource])
 
-  async function loadTechnologies() {
+  const loadTechnologies = useCallback(async function loadTechnologies() {
     await loadResource({
       key: 'technologies',
       setState: setTechnologiesState,
@@ -102,7 +102,7 @@ function useHomeContent() {
       mapper: mapTechnologiesToViewModels,
       fallbackMessage: 'No se pudieron cargar las tecnologias.',
     })
-  }
+  }, [loadResource])
 
   useEffect(() => {
     isMountedRef.current = true
@@ -114,7 +114,7 @@ function useHomeContent() {
     return () => {
       isMountedRef.current = false
     }
-  }, [])
+  }, [loadExperiences, loadProjects, loadTechnologies])
 
   return {
     projectsState: {

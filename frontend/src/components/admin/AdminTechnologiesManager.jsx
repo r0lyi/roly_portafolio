@@ -43,6 +43,11 @@ const initialFormData = {
   order: '',
 }
 
+const initialImageState = {
+  file: null,
+  removeCurrentImage: false,
+}
+
 function mapTechnologyToForm(technology) {
   return {
     name: technology.name ?? '',
@@ -55,8 +60,8 @@ function mapTechnologyToForm(technology) {
   }
 }
 
-function buildTechnologyPayload(formData) {
-  return {
+function buildTechnologyPayload(formData, imageState) {
+  const payload = {
     name: formData.name.trim(),
     img_url: normalizeImageAssetPath(formData.img_url) || null,
     group: formData.group.trim() || null,
@@ -65,13 +70,26 @@ function buildTechnologyPayload(formData) {
         ? null
         : Number(formData.order),
   }
+
+  if (imageState.file) {
+    payload.image = imageState.file
+  }
+
+  if (imageState.removeCurrentImage) {
+    payload.remove_image = true
+  }
+
+  return payload
 }
 
 function AdminTechnologiesManager({ onDataChange }) {
   const [technologies, setTechnologies] = useState([])
   const [selectedTechnologyId, setSelectedTechnologyId] = useState(null)
   const [formData, setFormData] = useState(initialFormData)
+  const [imageState, setImageState] = useState(initialImageState)
+  const [selectedImagePreviewUrl, setSelectedImagePreviewUrl] = useState('')
   const loadTechnologiesRef = useRef(null)
+  const imageInputRef = useRef(null)
   const [viewState, setViewState] = useState({
     isLoading: true,
     error: '',
@@ -137,9 +155,32 @@ function AdminTechnologiesManager({ onDataChange }) {
     loadTechnologiesRef.current?.()
   }, [])
 
+  useEffect(() => {
+    if (!imageState.file) {
+      setSelectedImagePreviewUrl('')
+      return undefined
+    }
+
+    const nextPreviewUrl = URL.createObjectURL(imageState.file)
+    setSelectedImagePreviewUrl(nextPreviewUrl)
+
+    return () => {
+      URL.revokeObjectURL(nextPreviewUrl)
+    }
+  }, [imageState.file])
+
+  function resetImageState() {
+    setImageState({ ...initialImageState })
+
+    if (imageInputRef.current) {
+      imageInputRef.current.value = ''
+    }
+  }
+
   function handleCreateNew() {
     setSelectedTechnologyId(null)
     setFormData(initialFormData)
+    resetImageState()
     setViewState((currentState) => ({
       ...currentState,
       error: '',
@@ -150,6 +191,7 @@ function AdminTechnologiesManager({ onDataChange }) {
   function startEditing(technology) {
     setSelectedTechnologyId(technology.id)
     setFormData(mapTechnologyToForm(technology))
+    resetImageState()
     setViewState((currentState) => ({
       ...currentState,
       error: '',
@@ -166,6 +208,30 @@ function AdminTechnologiesManager({ onDataChange }) {
     }))
   }
 
+  function handleImageChange(event) {
+    const nextImage = event.target.files?.[0] ?? null
+
+    setImageState({
+      file: nextImage,
+      removeCurrentImage: false,
+    })
+  }
+
+  function handleClearSelectedImage() {
+    resetImageState()
+  }
+
+  function handleRemoveCurrentImage() {
+    if (imageInputRef.current) {
+      imageInputRef.current.value = ''
+    }
+
+    setImageState({
+      file: null,
+      removeCurrentImage: true,
+    })
+  }
+
   async function handleSubmit(event) {
     event.preventDefault()
 
@@ -179,7 +245,7 @@ function AdminTechnologiesManager({ onDataChange }) {
     }
 
     try {
-      const payload = buildTechnologyPayload(formData)
+      const payload = buildTechnologyPayload(formData, imageState)
       const savedTechnology = selectedTechnologyId
         ? await updateTechnology(selectedTechnologyId, payload)
         : await createTechnology(payload)
@@ -237,6 +303,12 @@ function AdminTechnologiesManager({ onDataChange }) {
       }))
     }
   }
+
+  const currentImageUrl =
+    formData.img_url && !imageState.removeCurrentImage
+      ? resolveImageAssetUrl(formData.img_url)
+      : ''
+  const previewImageUrl = selectedImagePreviewUrl || currentImageUrl
 
   return (
     <section className={adminModuleClass}>
@@ -348,29 +420,80 @@ function AdminTechnologiesManager({ onDataChange }) {
               </label>
             </div>
 
-            <label className={formFieldClass} htmlFor="technology-img-url">
-              <span className={formLabelClass}>Ruta del logo</span>
+            <label className={formFieldClass} htmlFor="technology-image">
+              <span className={formLabelClass}>Logo</span>
               <input
-                id="technology-img-url"
+                id="technology-image"
+                ref={imageInputRef}
                 className={textInputClass}
-                name="img_url"
-                value={formData.img_url}
-                onChange={handleChange}
-                placeholder="logos/react.svg"
+                type="file"
+                accept=".svg,.png,.jpg,.jpeg,image/svg+xml,image/png,image/jpeg"
+                onChange={handleImageChange}
               />
               <span className="text-xs font-bold uppercase leading-5 tracking-[0.04em] text-[#3c3c3c]">
-                Guarda el archivo en `frontend/public/img` y escribe el nombre,
-                `img/...`, `public/img/...` o `/img/...`.
+                Sube un archivo SVG, PNG, JPG o JPEG. Se guardara
+                automaticamente en `frontend/public/img/tecnologias`.
               </span>
+              {imageState.file ? (
+                <span className="text-xs font-bold uppercase leading-5 tracking-[0.04em] text-[#3c3c3c]">
+                  Archivo seleccionado: {imageState.file.name}
+                </span>
+              ) : null}
+              {!imageState.file && currentImageUrl ? (
+                <span className="text-xs font-bold uppercase leading-5 tracking-[0.04em] text-[#3c3c3c]">
+                  Logo actual: {normalizeImageAssetPath(formData.img_url)}
+                </span>
+              ) : null}
+              {imageState.removeCurrentImage ? (
+                <span className="text-xs font-bold uppercase leading-5 tracking-[0.04em] text-[#8a1c1c]">
+                  El logo actual se eliminara al guardar.
+                </span>
+              ) : null}
             </label>
 
-            {formData.img_url ? (
+            {previewImageUrl ? (
               <div className={adminImagePreviewClass}>
                 <img
                   className="h-full w-full object-contain p-5"
-                  src={resolveImageAssetUrl(formData.img_url)}
-                  alt=""
+                  src={previewImageUrl}
+                  alt={`Vista previa del logo de ${formData.name || 'la tecnologia'}`}
                 />
+              </div>
+            ) : null}
+
+            {imageState.removeCurrentImage && formData.img_url ? (
+              <div className={adminFormActionsClass}>
+                <button
+                  type="button"
+                  className={secondaryButtonClass}
+                  onClick={handleClearSelectedImage}
+                >
+                  Conservar logo actual
+                </button>
+              </div>
+            ) : null}
+
+            {(imageState.file || currentImageUrl) && !imageState.removeCurrentImage ? (
+              <div className={adminFormActionsClass}>
+                {imageState.file ? (
+                  <button
+                    type="button"
+                    className={secondaryButtonClass}
+                    onClick={handleClearSelectedImage}
+                  >
+                    Quitar archivo seleccionado
+                  </button>
+                ) : null}
+
+                {!imageState.file && currentImageUrl ? (
+                  <button
+                    type="button"
+                    className={dangerButtonClass}
+                    onClick={handleRemoveCurrentImage}
+                  >
+                    Eliminar logo actual
+                  </button>
+                ) : null}
               </div>
             ) : null}
 

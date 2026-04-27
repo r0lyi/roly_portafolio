@@ -1,3 +1,8 @@
+import {
+  homeButtonInvertedClass,
+  homePanelClass,
+} from '../../styles/homeBrutalistClasses.js'
+
 function HomeSectionStateCard({
   eyebrow = 'Estado',
   title,
@@ -6,7 +11,7 @@ function HomeSectionStateCard({
   onAction,
 }) {
   return (
-    <div className="rounded-[28px] border-[4px] border-[#101010] bg-[#fffef8] p-6 shadow-[8px_8px_0_rgba(16,16,16,0.14)] max-[640px]:p-5 max-[640px]:shadow-[6px_6px_0_rgba(16,16,16,0.14)]">
+    <div className={`${homePanelClass} p-5 sm:p-6`}>
       <p className="m-0 text-[0.72rem] font-black uppercase tracking-[0.16em] text-[#5b5b5b]">
         {eyebrow}
       </p>
@@ -20,7 +25,7 @@ function HomeSectionStateCard({
       {onAction ? (
         <button
           type="button"
-          className="mt-5 inline-flex items-center justify-center border-[4px] border-[#101010] bg-[#101010] px-5 py-3 font-black uppercase tracking-[0.04em] text-[#18ff48] transition duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[8px_8px_0_#101010]"
+          className={`mt-5 ${homeButtonInvertedClass}`}
           onClick={onAction}
         >
           {actionLabel}
