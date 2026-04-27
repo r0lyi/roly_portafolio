@@ -12,6 +12,7 @@ html {
 body {
   margin: 0;
   min-width: 320px;
+  overflow-x: clip;
   background:
     radial-gradient(circle at top left, rgba(197, 107, 77, 0.16), transparent 22%),
     radial-gradient(circle at top right, rgba(39, 105, 95, 0.14), transparent 24%),
@@ -52,4 +53,72 @@ code {
 
 #root {
   min-height: 100vh;
+  overflow-x: clip;
+}
+
+.home-tech-marquee__track {
+  --marquee-gap: 18px;
+  --marquee-duration: 34s;
+  --marquee-offset: 0%;
+  display: flex;
+  gap: var(--marquee-gap);
+  width: max-content;
+  will-change: transform;
+}
+
+.home-tech-marquee__segment {
+  display: flex;
+  gap: var(--marquee-gap);
+  flex: 0 0 auto;
+}
+
+.home-tech-marquee__track--rtl {
+  animation: home-tech-marquee-rtl var(--marquee-duration) linear infinite;
+}
+
+.home-tech-marquee__track--ltr {
+  animation: home-tech-marquee-ltr var(--marquee-duration) linear infinite;
+}
+
+.home-tech-marquee:hover .home-tech-marquee__track {
+  animation-play-state: paused;
+}
+
+@keyframes home-tech-marquee-rtl {
+  from {
+    transform: translateX(var(--marquee-offset));
+  }
+
+  to {
+    transform: translateX(
+      calc(var(--marquee-offset) - 50% - (var(--marquee-gap) / 2))
+    );
+  }
+}
+
+@keyframes home-tech-marquee-ltr {
+  from {
+    transform: translateX(
+      calc(var(--marquee-offset) - 50% - (var(--marquee-gap) / 2))
+    );
+  }
+
+  to {
+    transform: translateX(var(--marquee-offset));
+  }
+}
+
+@media (max-width: 640px) {
+  .home-tech-marquee__track,
+  .home-tech-marquee__segment {
+    --marquee-gap: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-tech-marquee__track--rtl,
+  .home-tech-marquee__track--ltr {
+    animation: none;
+    transform: translateX(var(--marquee-offset));
+  }
 }

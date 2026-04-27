@@ -37,7 +37,7 @@ function HeroSection() {
     <section id="hero" className="grid min-h-svh grid-rows-[auto_1fr] bg-[#f2f0e8]">
       <HomeHeroHeader />
 
-      <div className="mx-auto grid w-full max-w-[1180px] grid-cols-[minmax(0,_1.08fr)_minmax(320px,_0.92fr)] items-center gap-14 px-6 py-[clamp(24px,4vw,40px)] max-[960px]:grid-cols-1 max-[640px]:gap-10 max-[640px]:py-7">
+      <div className="mx-auto grid w-full max-w-[1180px] grid-cols-[minmax(0,_1.08fr)_minmax(300px,_0.92fr)] items-center gap-10 px-4 py-[clamp(24px,4vw,40px)] sm:px-6 xl:gap-14 max-[960px]:grid-cols-1 max-[960px]:items-start max-[640px]:gap-8 max-[640px]:py-7">
         <div className="grid content-center gap-5">
           <p className="m-0 w-fit border-[3px] border-[#101010] bg-white px-[0.9rem] py-[0.55rem] text-[0.92rem] font-black uppercase tracking-[0.08em] text-[#101010]">
             {profile.role}
@@ -65,7 +65,7 @@ function HeroSection() {
             {profile.summary}
           </p>
 
-          <div className="flex flex-wrap gap-[14px]">
+          <div className="flex flex-wrap gap-[12px] sm:gap-[14px]">
             {profile.socialLinks.map((link) => {
               const Icon = socialIconMap[link.label]
 
