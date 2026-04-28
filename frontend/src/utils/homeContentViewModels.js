@@ -98,9 +98,22 @@ export function mapProjectsToViewModels(items) {
     const stack = normalizeCollection(project.technologies)
       .map((technology) => normalizeText(technology.name))
       .filter(Boolean)
-    const primaryImage = normalizeCollection(project.images).find((image) =>
-      normalizeText(image.image_url),
-    )
+    const images = normalizeCollection(project.images)
+      .map((image, imageIndex) => ({
+        id: image.id ?? `${title}-image-${imageIndex}`,
+        imageUrl: normalizeText(image.image_url),
+        position: Number.isFinite(Number(image.position))
+          ? Number(image.position)
+          : imageIndex,
+      }))
+      .filter((image) => image.imageUrl)
+      .sort((leftImage, rightImage) => {
+        if (leftImage.position !== rightImage.position) {
+          return leftImage.position - rightImage.position
+        }
+
+        return String(leftImage.id).localeCompare(String(rightImage.id), 'es')
+      })
     const links = createProjectLinks(project)
 
     return {
@@ -108,7 +121,8 @@ export function mapProjectsToViewModels(items) {
       title,
       description:
         description || 'Este proyecto todavia no tiene una descripcion publica.',
-      imageUrl: primaryImage?.image_url ?? '',
+      imageUrl: images[0]?.imageUrl ?? '',
+      images,
       stack,
       links,
       statusLabel: links.length === 0 ? 'Proximamente' : '',
