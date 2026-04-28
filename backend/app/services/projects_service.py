@@ -1,4 +1,7 @@
-from fastapi import HTTPException, status
+from pathlib import Path
+from uuid import uuid4
+
+from fastapi import HTTPException, UploadFile, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
@@ -13,6 +16,11 @@ PROJECT_LOAD_OPTIONS = (
     selectinload(Project.technologies),
     selectinload(Project.images),
 )
+PROJECT_IMAGE_DIRECTORY = "/img/proyectos"
+PROJECT_IMAGE_UPLOAD_DIRECTORY = (
+    Path(__file__).resolve().parents[3] / "frontend" / "public" / "img" / "proyectos"
+)
+PROJECT_IMAGE_EXTENSIONS = {".svg", ".png", ".jpg", ".jpeg", ".webp"}
 
 
 def list_projects(db: Session) -> list[Project]:
@@ -100,7 +108,10 @@ def create_project_image(db: Session, project_id: int, payload: ProjectImageCrea
     get_project_or_404(db, project_id)
 
     image_data = payload.model_dump()
-    image_data["image_url"] = normalize_public_asset_path(image_data["image_url"])
+    image_data["image_url"] = normalize_public_asset_path(
+        image_data["image_url"],
+        default_directory=PROJECT_IMAGE_DIRECTORY,
+    )
     image = ProjectImage(project_id=project_id, **image_data)
     db.add(image)
     db.commit()
@@ -118,7 +129,10 @@ def update_project_image(
 
     for field, value in payload.model_dump(exclude_unset=True).items():
         if field == "image_url" and value is not None:
-            value = normalize_public_asset_path(value)
+            value = normalize_public_asset_path(
+                value,
+                default_directory=PROJECT_IMAGE_DIRECTORY,
+            )
         setattr(image, field, value)
 
     db.commit()
@@ -157,7 +171,10 @@ def _build_project_images(images: list[ProjectImageCreate | dict] | None) -> lis
     project_images: list[ProjectImage] = []
     for image in images:
         image_data = image.model_dump() if hasattr(image, "model_dump") else image
-        image_data["image_url"] = normalize_public_asset_path(image_data["image_url"])
+        image_data["image_url"] = normalize_public_asset_path(
+            image_data["image_url"],
+            default_directory=PROJECT_IMAGE_DIRECTORY,
+        )
         project_images.append(ProjectImage(**image_data))
 
     return project_images
@@ -171,3 +188,34 @@ def _unique_ids(values: list[int]) -> list[int]:
             seen.add(value)
             unique_values.append(value)
     return unique_values
+
+
+async def save_project_image_file(project_id: int, image: UploadFile | None) -> str | None:
+    if image is None:
+        return None
+
+    filename = (image.filename or "").strip()
+    extension = Path(filename).suffix.lower()
+
+    if extension not in PROJECT_IMAGE_EXTENSIONS:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Solo se permiten imagenes SVG, PNG, JPG, JPEG o WEBP.",
+        )
+
+    content = await image.read()
+    await image.close()
+
+    if not content:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="La imagen enviada esta vacia.",
+        )
+
+    PROJECT_IMAGE_UPLOAD_DIRECTORY.mkdir(parents=True, exist_ok=True)
+
+    generated_filename = f"p{project_id}-{uuid4().hex[:6]}{extension}"
+    target_path = PROJECT_IMAGE_UPLOAD_DIRECTORY / generated_filename
+    target_path.write_bytes(content)
+
+    return f"{PROJECT_IMAGE_DIRECTORY}/{generated_filename}"

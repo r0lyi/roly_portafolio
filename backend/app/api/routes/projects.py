@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Response, status
+from fastapi import APIRouter, File, Form, HTTPException, Response, UploadFile, status
 
 from app.api.dependencies import AdminUser, DBSession
 from app.schemas.project import ProjectCreate, ProjectReadWithTechnologies, ProjectUpdate
@@ -49,18 +49,51 @@ def get_project_image(project_id: int, image_id: int, db: DBSession):
     response_model=ProjectImageRead,
     status_code=status.HTTP_201_CREATED,
 )
-def create_project_image(project_id: int, payload: ProjectImageCreate, db: DBSession, admin_user: AdminUser):
+async def create_project_image(
+    project_id: int,
+    db: DBSession,
+    admin_user: AdminUser,
+    position: str | None = Form(default=None),
+    image_url: str | None = Form(default=None),
+    image: UploadFile | None = File(default=None),
+):
+    payload = ProjectImageCreate(
+        image_url=await _resolve_project_image_url(
+            project_id=project_id,
+            image_url=image_url,
+            image=image,
+        ),
+        position=_parse_optional_int(position, field_name="La posicion") or 0,
+    )
     return projects_service.create_project_image(db, project_id, payload)
 
 
 @router.patch("/{project_id}/images/{image_id}", response_model=ProjectImageRead)
-def update_project_image(
+async def update_project_image(
     project_id: int,
     image_id: int,
-    payload: ProjectImageUpdate,
     db: DBSession,
     admin_user: AdminUser,
+    position: str | None = Form(default=None),
+    image_url: str | None = Form(default=None),
+    image: UploadFile | None = File(default=None),
 ):
+    payload_data = {}
+
+    if position is not None:
+        payload_data["position"] = _parse_optional_int(
+            position,
+            field_name="La posicion",
+        )
+
+    if image is not None or image_url is not None:
+        payload_data["image_url"] = await _resolve_project_image_url(
+            project_id=project_id,
+            image_url=image_url,
+            image=image,
+        )
+
+    payload = ProjectImageUpdate(**payload_data)
     return projects_service.update_project_image(db, project_id, image_id, payload)
 
 
@@ -68,3 +101,44 @@ def update_project_image(
 def delete_project_image(project_id: int, image_id: int, db: DBSession, admin_user: AdminUser):
     projects_service.delete_project_image(db, project_id, image_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+def _normalize_optional_text(value: str | None) -> str | None:
+    normalized_value = (value or "").strip()
+    return normalized_value or None
+
+
+def _parse_optional_int(value: str | None, *, field_name: str) -> int | None:
+    normalized_value = (value or "").strip()
+
+    if not normalized_value:
+        return None
+
+    try:
+        return int(normalized_value)
+    except ValueError as error:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"{field_name} debe ser un numero entero.",
+        ) from error
+
+
+async def _resolve_project_image_url(
+    *,
+    project_id: int,
+    image_url: str | None,
+    image: UploadFile | None,
+) -> str:
+    if image is not None:
+        saved_path = await projects_service.save_project_image_file(project_id, image)
+        if saved_path:
+            return saved_path
+
+    normalized_path = _normalize_optional_text(image_url)
+    if normalized_path:
+        return normalized_path
+
+    raise HTTPException(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        detail="Debes adjuntar una imagen o indicar una ruta valida.",
+    )

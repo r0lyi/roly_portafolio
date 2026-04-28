@@ -3,9 +3,12 @@ import AdminSectionHeader from './AdminSectionHeader.jsx'
 import AdminStatusBanner from './AdminStatusBanner.jsx'
 import {
   createProject,
+  createProjectImage,
   deleteProject,
+  deleteProjectImage,
   getProjects,
   updateProject,
+  updateProjectImage,
 } from '../../services/api/projects.js'
 import { getTechnologies } from '../../services/api/technologies.js'
 import {
@@ -68,6 +71,8 @@ function createImageRow(image = {}) {
       image.position === null || image.position === undefined
         ? '0'
         : String(image.position),
+    image: null,
+    inputKey: createClientId(),
   }
 }
 
@@ -89,16 +94,24 @@ function buildProjectPayload(formData) {
     demo_url: formData.demo_url.trim() || null,
     repo_url: formData.repo_url.trim() || null,
     technology_ids: formData.technology_ids,
-    images: formData.images
-      .filter((image) => image.image_url.trim())
-      .map((image, index) => ({
-        image_url: normalizeImageAssetPath(image.image_url),
-        position:
-          image.position === '' || Number.isNaN(Number(image.position))
-            ? index
-            : Number(image.position),
-      })),
   }
+}
+
+function buildProjectImagePayload(image, index) {
+  const payload = {
+    position:
+      image.position === '' || Number.isNaN(Number(image.position))
+        ? index
+        : Number(image.position),
+  }
+
+  if (image.image instanceof File) {
+    payload.image = image.image
+  } else if (!image.id && image.image_url.trim()) {
+    payload.image_url = normalizeImageAssetPath(image.image_url)
+  }
+
+  return payload
 }
 
 function AdminProjectsManager({ onDataChange }) {
@@ -214,11 +227,74 @@ function AdminProjectsManager({ onDataChange }) {
     }))
   }
 
+  function updateImageFileRow(clientId, nextFile) {
+    setFormData((currentData) => ({
+      ...currentData,
+      images: currentData.images.map((image) =>
+        image.clientId === clientId
+          ? {
+              ...image,
+              image: nextFile,
+            }
+          : image,
+      ),
+    }))
+  }
+
+  function clearImageFileRow(clientId) {
+    setFormData((currentData) => ({
+      ...currentData,
+      images: currentData.images.map((image) =>
+        image.clientId === clientId
+          ? {
+              ...image,
+              image: null,
+              inputKey: createClientId(),
+            }
+          : image,
+      ),
+    }))
+  }
+
   function removeImageRow(clientId) {
     setFormData((currentData) => ({
       ...currentData,
       images: currentData.images.filter((image) => image.clientId !== clientId),
     }))
+  }
+
+  async function syncProjectImages(projectId, originalImages, nextImages) {
+    const originalImageIds = new Set(
+      originalImages.map((image) => image.id).filter(Boolean),
+    )
+    const keptImageIds = new Set(
+      nextImages.map((image) => image.id).filter(Boolean),
+    )
+    const removedImageIds = [...originalImageIds].filter(
+      (imageId) => !keptImageIds.has(imageId),
+    )
+
+    await Promise.all(
+      removedImageIds.map((imageId) => deleteProjectImage(projectId, imageId)),
+    )
+
+    for (const [index, image] of nextImages.entries()) {
+      const hasSelectedFile = image.image instanceof File
+      const hasStoredImage = Boolean(image.id && image.image_url.trim())
+      const hasManualPath = Boolean(!image.id && image.image_url.trim())
+
+      if (!hasSelectedFile && !hasStoredImage && !hasManualPath) {
+        continue
+      }
+
+      const payload = buildProjectImagePayload(image, index)
+
+      if (image.id) {
+        await updateProjectImage(projectId, image.id, payload)
+      } else {
+        await createProjectImage(projectId, payload)
+      }
+    }
   }
 
   async function handleSubmit(event) {
@@ -233,11 +309,22 @@ function AdminProjectsManager({ onDataChange }) {
       return
     }
 
+    const originalProject = selectedProjectId
+      ? projects.find((project) => project.id === selectedProjectId) ?? null
+      : null
+    let savedProject = null
+
     try {
       const payload = buildProjectPayload(formData)
-      const savedProject = selectedProjectId
+      savedProject = selectedProjectId
         ? await updateProject(selectedProjectId, payload)
         : await createProject(payload)
+
+      await syncProjectImages(
+        savedProject.id,
+        originalProject?.images ?? [],
+        formData.images,
+      )
 
       await loadProjectsData(savedProject.id)
       setViewState((currentState) => ({
@@ -248,9 +335,22 @@ function AdminProjectsManager({ onDataChange }) {
       }))
       onDataChange()
     } catch (error) {
+      if (savedProject?.id) {
+        try {
+          await loadProjectsData(savedProject.id)
+        } catch {
+          // Ignore follow-up refresh errors here; the main API error is more useful.
+        }
+      }
+
       setViewState((currentState) => ({
         ...currentState,
-        error: getApiErrorMessage(error, 'No se pudo guardar el proyecto.'),
+        error: getApiErrorMessage(
+          error,
+          savedProject && !selectedProjectId
+            ? 'El proyecto se creo, pero hubo un problema al sincronizar sus imagenes.'
+            : 'No se pudo guardar el proyecto.',
+        ),
         success: '',
       }))
     }
@@ -458,9 +558,8 @@ function AdminProjectsManager({ onDataChange }) {
               </div>
 
               <p className="m-0 text-sm font-bold uppercase leading-6 tracking-[0.04em] text-[#3c3c3c]">
-                Las imagenes locales se sirven desde `frontend/public/img`. Puedes
-                escribir `capturas/app.webp`, `img/capturas/app.webp`,
-                `public/img/capturas/app.webp` o la ruta final `/img/...`.
+                Adjunta imagenes del proyecto y se guardaran automaticamente en
+                `frontend/public/img/proyectos` con nombres cortos.
               </p>
 
               {formData.images.length === 0 ? (
@@ -473,39 +572,68 @@ function AdminProjectsManager({ onDataChange }) {
               ) : (
                 <div className={adminImageEditorListClass}>
                   {formData.images.map((image) => (
-                    <div key={image.clientId} className={adminImageEditorRowClass}>
-                      <input
-                        className={textInputClass}
-                        value={image.image_url}
-                        onChange={(event) =>
-                          updateImageRow(
-                            image.clientId,
-                            'image_url',
-                            event.target.value,
-                          )
-                        }
-                        placeholder="capturas/app.webp"
-                      />
-                      <input
-                        className={textInputClass}
-                        type="number"
-                        value={image.position}
-                        onChange={(event) =>
-                          updateImageRow(
-                            image.clientId,
-                            'position',
-                            event.target.value,
-                          )
-                        }
-                        placeholder="0"
-                      />
-                      <button
-                        type="button"
-                        className={adminInlineDangerButtonClass}
-                        onClick={() => removeImageRow(image.clientId)}
-                      >
-                        Quitar
-                      </button>
+                    <div
+                      key={image.clientId}
+                      className="grid gap-3 border-[3px] border-[#101010] bg-white p-4"
+                    >
+                      <div className={adminImageEditorRowClass}>
+                        <input
+                          key={image.inputKey}
+                          className={textInputClass}
+                          type="file"
+                          accept=".svg,.png,.jpg,.jpeg,.webp,image/svg+xml,image/png,image/jpeg,image/webp"
+                          onChange={(event) =>
+                            updateImageFileRow(
+                              image.clientId,
+                              event.target.files?.[0] ?? null,
+                            )
+                          }
+                        />
+                        <input
+                          className={textInputClass}
+                          type="number"
+                          value={image.position}
+                          onChange={(event) =>
+                            updateImageRow(
+                              image.clientId,
+                              'position',
+                              event.target.value,
+                            )
+                          }
+                          placeholder="0"
+                        />
+                        <button
+                          type="button"
+                          className={adminInlineDangerButtonClass}
+                          onClick={() => removeImageRow(image.clientId)}
+                        >
+                          Quitar
+                        </button>
+                      </div>
+
+                      {image.image instanceof File ? (
+                        <p className="m-0 text-xs font-bold uppercase leading-5 tracking-[0.04em] text-[#3c3c3c]">
+                          Archivo seleccionado: {image.image.name}
+                        </p>
+                      ) : null}
+
+                      {!(image.image instanceof File) && image.image_url ? (
+                        <p className="m-0 text-xs font-bold uppercase leading-5 tracking-[0.04em] text-[#3c3c3c]">
+                          Imagen actual: {normalizeImageAssetPath(image.image_url)}
+                        </p>
+                      ) : null}
+
+                      {image.image instanceof File ? (
+                        <div className={adminFormActionsClass}>
+                          <button
+                            type="button"
+                            className={secondaryButtonClass}
+                            onClick={() => clearImageFileRow(image.clientId)}
+                          >
+                            Quitar archivo seleccionado
+                          </button>
+                        </div>
+                      ) : null}
                     </div>
                   ))}
                 </div>

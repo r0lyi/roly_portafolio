@@ -37,7 +37,7 @@ export const pillTagListClass = 'm-[18px_0_0] flex flex-wrap gap-2.5 p-0'
 export const pillTagClass =
   'list-none rounded-full border border-[rgba(21,39,48,0.12)] bg-[rgba(255,255,255,0.64)] px-[0.9rem] py-[0.55rem] text-[0.92rem] text-[#28424c]'
 
-export const primaryButtonClass = `${buttonBaseClass} bg-[#101010] text-[#18ff48] shadow-[4px_4px_0_#101010] hover:shadow-[6px_6px_0_#101010]`
+export const primaryButtonClass = `${buttonBaseClass} bg-[#101010] text-white shadow-[4px_4px_0_#101010] hover:shadow-[6px_6px_0_#101010]`
 
 export const secondaryButtonClass = `${buttonBaseClass} bg-white shadow-[4px_4px_0_#101010] hover:shadow-[6px_6px_0_#101010]`
 

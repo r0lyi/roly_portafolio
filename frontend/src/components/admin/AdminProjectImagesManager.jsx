@@ -42,6 +42,7 @@ import {
 const initialFormData = {
   image_url: '',
   position: '0',
+  image: null,
 }
 
 function mapImageToForm(image) {
@@ -51,6 +52,7 @@ function mapImageToForm(image) {
       image.position === null || image.position === undefined
         ? '0'
         : String(image.position),
+    image: null,
   }
 }
 
@@ -61,6 +63,8 @@ function AdminProjectImagesManager({ onDataChange }) {
   const [selectedImageId, setSelectedImageId] = useState(null)
   const [formData, setFormData] = useState(initialFormData)
   const loadProjectsRef = useRef(null)
+  const imageInputRef = useRef(null)
+  const [selectedImagePreviewUrl, setSelectedImagePreviewUrl] = useState('')
   const [viewState, setViewState] = useState({
     isLoading: true,
     error: '',
@@ -141,9 +145,30 @@ function AdminProjectImagesManager({ onDataChange }) {
     loadProjectsRef.current?.()
   }, [])
 
+  useEffect(() => {
+    if (!(formData.image instanceof File)) {
+      setSelectedImagePreviewUrl('')
+      return undefined
+    }
+
+    const nextPreviewUrl = URL.createObjectURL(formData.image)
+    setSelectedImagePreviewUrl(nextPreviewUrl)
+
+    return () => {
+      URL.revokeObjectURL(nextPreviewUrl)
+    }
+  }, [formData.image])
+
+  function resetImageInput() {
+    if (imageInputRef.current) {
+      imageInputRef.current.value = ''
+    }
+  }
+
   function handleCreateNew() {
     setSelectedImageId(null)
     setFormData(initialFormData)
+    resetImageInput()
     setViewState((currentState) => ({
       ...currentState,
       error: '',
@@ -154,6 +179,7 @@ function AdminProjectImagesManager({ onDataChange }) {
   function startEditing(image) {
     setSelectedImageId(image.id)
     setFormData(mapImageToForm(image))
+    resetImageInput()
     setViewState((currentState) => ({
       ...currentState,
       error: '',
@@ -170,10 +196,28 @@ function AdminProjectImagesManager({ onDataChange }) {
     }))
   }
 
+  function handleFileChange(event) {
+    const nextImage = event.target.files?.[0] ?? null
+
+    setFormData((currentData) => ({
+      ...currentData,
+      image: nextImage,
+    }))
+  }
+
+  function handleClearSelectedFile() {
+    resetImageInput()
+    setFormData((currentData) => ({
+      ...currentData,
+      image: null,
+    }))
+  }
+
   async function handleProjectSelection(projectId) {
     setSelectedProjectId(projectId)
     setSelectedImageId(null)
     setFormData(initialFormData)
+    resetImageInput()
     setViewState((currentState) => ({
       ...currentState,
       isLoading: true,
@@ -195,10 +239,10 @@ function AdminProjectImagesManager({ onDataChange }) {
       return
     }
 
-    if (!formData.image_url.trim()) {
+    if (!selectedImageId && !(formData.image instanceof File)) {
       setViewState((currentState) => ({
         ...currentState,
-        error: 'La ruta de la imagen es obligatoria.',
+        error: 'Debes adjuntar una imagen para crear el registro.',
         success: '',
       }))
       return
@@ -206,11 +250,14 @@ function AdminProjectImagesManager({ onDataChange }) {
 
     try {
       const payload = {
-        image_url: normalizeImageAssetPath(formData.image_url),
         position:
           formData.position === '' || Number.isNaN(Number(formData.position))
             ? 0
             : Number(formData.position),
+      }
+
+      if (formData.image instanceof File) {
+        payload.image = formData.image
       }
 
       const savedImage = selectedImageId
@@ -267,6 +314,9 @@ function AdminProjectImagesManager({ onDataChange }) {
 
   const selectedProject =
     projects.find((project) => project.id === selectedProjectId) ?? null
+  const previewImageUrl =
+    selectedImagePreviewUrl ||
+    (formData.image_url ? resolveImageAssetUrl(formData.image_url) : '')
 
   return (
     <section className={adminModuleClass}>
@@ -353,22 +403,53 @@ function AdminProjectImagesManager({ onDataChange }) {
             </div>
 
             <form className={adminFormClass} onSubmit={handleSubmit}>
-              <label className={formFieldClass} htmlFor="project-image-url">
-                <span className={formLabelClass}>Ruta de imagen</span>
+              <label className={formFieldClass} htmlFor="project-image-file">
+                <span className={formLabelClass}>Archivo de imagen</span>
                 <input
-                  id="project-image-url"
+                  id="project-image-file"
+                  ref={imageInputRef}
                   className={textInputClass}
-                  name="image_url"
-                  value={formData.image_url}
-                  onChange={handleChange}
-                  placeholder="proyectos/mi-captura.webp"
-                  required
+                  type="file"
+                  accept=".svg,.png,.jpg,.jpeg,.webp,image/svg+xml,image/png,image/jpeg,image/webp"
+                  onChange={handleFileChange}
                 />
                 <span className="text-xs font-bold uppercase leading-5 tracking-[0.04em] text-[#3c3c3c]">
-                  Guarda la imagen en `frontend/public/img` y escribe el nombre,
-                  `img/...`, `public/img/...` o `/img/...`.
+                  Sube la imagen y se guardara automaticamente en
+                  `frontend/public/img/proyectos` con un identificador corto.
                 </span>
+                {formData.image instanceof File ? (
+                  <span className="text-xs font-bold uppercase leading-5 tracking-[0.04em] text-[#3c3c3c]">
+                    Archivo seleccionado: {formData.image.name}
+                  </span>
+                ) : null}
+                {!(formData.image instanceof File) && formData.image_url ? (
+                  <span className="text-xs font-bold uppercase leading-5 tracking-[0.04em] text-[#3c3c3c]">
+                    Imagen actual: {normalizeImageAssetPath(formData.image_url)}
+                  </span>
+                ) : null}
               </label>
+
+              {previewImageUrl ? (
+                <div className={adminImagePreviewClass}>
+                  <img
+                    className="h-full w-full object-cover"
+                    src={previewImageUrl}
+                    alt="Vista previa de la imagen del proyecto"
+                  />
+                </div>
+              ) : null}
+
+              {formData.image instanceof File ? (
+                <div className={adminFormActionsClass}>
+                  <button
+                    type="button"
+                    className={secondaryButtonClass}
+                    onClick={handleClearSelectedFile}
+                  >
+                    Quitar archivo seleccionado
+                  </button>
+                </div>
+              ) : null}
 
               <label className={formFieldClass} htmlFor="project-image-position">
                 <span className={formLabelClass}>Posicion</span>
