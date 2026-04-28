@@ -5,6 +5,7 @@ from fastapi import HTTPException, UploadFile, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
+from app.core.config import get_settings
 from app.models.project import Project
 from app.models.project_image import ProjectImage
 from app.models.technology import Technology
@@ -12,14 +13,14 @@ from app.schemas.project import ProjectCreate, ProjectUpdate
 from app.schemas.project_image import ProjectImageCreate, ProjectImageUpdate
 from app.utils.asset_paths import normalize_public_asset_path
 
+settings = get_settings()
+
 PROJECT_LOAD_OPTIONS = (
     selectinload(Project.technologies),
     selectinload(Project.images),
 )
-PROJECT_IMAGE_DIRECTORY = "/img/proyectos"
-PROJECT_IMAGE_UPLOAD_DIRECTORY = (
-    Path(__file__).resolve().parents[3] / "frontend" / "public" / "img" / "proyectos"
-)
+PROJECT_IMAGE_DIRECTORY = settings.project_image_dir
+PROJECT_IMAGE_UPLOAD_DIRECTORY = settings.project_image_upload_dir
 PROJECT_IMAGE_EXTENSIONS = {".svg", ".png", ".jpg", ".jpeg", ".webp"}
 
 

@@ -1,7 +1,7 @@
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, Text, func, text
 from sqlalchemy.orm import relationship
 
-from app.database.base import Base
+from app.db.base import Base
 
 
 class ProjectImage(Base):

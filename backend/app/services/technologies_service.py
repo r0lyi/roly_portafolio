@@ -7,14 +7,15 @@ from fastapi import HTTPException, UploadFile, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.config import get_settings
 from app.models.technology import Technology
 from app.schemas.technology import TechnologyCreate, TechnologyUpdate
 from app.utils.asset_paths import normalize_public_asset_path
 
-TECHNOLOGY_IMAGE_DIRECTORY = "/img/tecnologias"
-TECHNOLOGY_IMAGE_UPLOAD_DIRECTORY = (
-    Path(__file__).resolve().parents[3] / "frontend" / "public" / "img" / "tecnologias"
-)
+settings = get_settings()
+
+TECHNOLOGY_IMAGE_DIRECTORY = settings.technology_image_dir
+TECHNOLOGY_IMAGE_UPLOAD_DIRECTORY = settings.technology_image_upload_dir
 TECHNOLOGY_IMAGE_EXTENSIONS = {".svg", ".png", ".jpg", ".jpeg"}
 
 

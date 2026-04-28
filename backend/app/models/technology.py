@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import quoted_name
 
-from app.database.base import Base
+from app.db.base import Base
 from app.models.association import project_tech
 
 

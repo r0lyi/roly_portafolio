@@ -1,6 +1,6 @@
 from sqlalchemy import Column, ForeignKey, Integer, Table
 
-from app.database.base import Base
+from app.db.base import Base
 
 project_tech = Table(
     "project_tech",

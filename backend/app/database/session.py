@@ -1,17 +1,3 @@
-from sqlalchemy.orm import sessionmaker
-from .connection import engine
+from app.db.session import SessionLocal, engine, get_db
 
-# Crear SessionLocal
-SessionLocal = sessionmaker(
-    autocommit=False,
-    autoflush=False,
-    bind=engine
-)
-
-# Dependencia para FastAPI
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+__all__ = ["SessionLocal", "engine", "get_db"]

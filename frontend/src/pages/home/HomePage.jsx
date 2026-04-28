@@ -1,6 +1,7 @@
 import useDocumentTitle from '../../hooks/useDocumentTitle.js'
 import useHomeContent from '../../hooks/useHomeContent.js'
 import AboutSection from '../../sections/home/AboutSection.jsx'
+import HomeBackToHeroButton from '../../components/home/HomeBackToHeroButton.jsx'
 import ContactSection from '../../sections/home/ContactSection.jsx'
 import ExperienceSection from '../../sections/home/ExperienceSection.jsx'
 import HeroSection from '../../sections/home/HeroSection.jsx'
@@ -19,6 +20,7 @@ function HomePage() {
       <ProjectsSection projectsState={projectsState} />
       <SkillsSection technologiesState={technologiesState} />
       <ContactSection />
+      <HomeBackToHeroButton />
     </>
   )
 }
