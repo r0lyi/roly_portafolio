@@ -4,8 +4,8 @@ import HomeSectionShell from '../../components/home/HomeSectionShell.jsx'
 import { portfolioData } from '../../data/portfolio.js'
 import { createContactMessage } from '../../services/api/contactMessages.js'
 import {
-  homeButtonInvertedClass,
   homePanelClass,
+  homeButtonPrimaryClass,
   homeStatusMessageClass,
 } from '../../styles/homeBrutalistClasses.js'
 import { getApiErrorMessage } from '../../utils/getApiErrorMessage.js'
@@ -125,7 +125,7 @@ function ContactSection() {
 
             <button
               type="submit"
-              className={`${homeButtonInvertedClass} w-full py-4 text-[clamp(1.15rem,3vw,1.8rem)] leading-none tracking-[-0.04em] max-[640px]:text-[1.2rem]`}
+              className={`${homeButtonPrimaryClass} w-full py-4 text-[clamp(1.05rem,2.4vw,1.35rem)] leading-none tracking-[0.01em] shadow-[8px_8px_0_#101010] max-[640px]:text-[1rem] max-[640px]:shadow-[6px_6px_0_#101010]`}
               disabled={viewState.isSubmitting}
             >
               {viewState.isSubmitting ? 'SENDING...' : contact.submitLabel}

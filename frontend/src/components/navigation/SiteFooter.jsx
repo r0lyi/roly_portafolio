@@ -17,13 +17,16 @@ function SiteFooter() {
   }
 
   const { profile, contact } = portfolioData
-  const footerLinks = [
-    ...profile.socialLinks,
-    {
-      label: 'Email',
-      href: `mailto:${contact.email}`,
-    },
-  ]
+  const footerLinks = profile.socialLinks.map((link) => {
+    if (link.label === 'Gmail' && contact.gmailComposeUrl) {
+      return {
+        ...link,
+        href: contact.gmailComposeUrl,
+      }
+    }
+
+    return link
+  })
 
   return (
     <footer className="border-t-[4px] border-[#101010] bg-[#f2f0e8] text-[#101010]">

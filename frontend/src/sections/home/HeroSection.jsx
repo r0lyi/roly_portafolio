@@ -1,6 +1,12 @@
 import HomeHeroHeader from '../../components/home/HomeHeroHeader.jsx'
 import HomeHeroPoster from '../../components/home/HomeHeroPoster.jsx'
 import { portfolioData } from '../../data/portfolio.js'
+import {
+  homeButtonNeutralClass,
+  homeButtonPrimaryClass,
+} from '../../styles/homeBrutalistClasses.js'
+import { scrollToSection } from '../../utils/scrollToSection.js'
+import { Download, ArrowDownRight } from 'lucide-react'
 
 function GitHubIcon({ className = '' }) {
   return (
@@ -24,14 +30,28 @@ function LinkedInIcon({ className = '' }) {
   )
 }
 
+function GmailIcon({ className = '' }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path
+        fill="currentColor"
+        d="M3 5.25A2.25 2.25 0 0 1 5.25 3h13.5A2.25 2.25 0 0 1 21 5.25v13.5A2.25 2.25 0 0 1 18.75 21H5.25A2.25 2.25 0 0 1 3 18.75V5.25Zm2.2.3v12.9h2.66v-7.1L12 14.3l4.14-2.95v7.1h2.66V5.55L12 10.42 5.2 5.55Z"
+      />
+    </svg>
+  )
+}
+
 const socialIconMap = {
   GitHub: GitHubIcon,
   LinkedIn: LinkedInIcon,
+  Gmail: GmailIcon,
 }
 
 function HeroSection() {
   const { profile } = portfolioData
   const socialLinkClassName = 'grid h-[72px] w-[72px] place-items-center border-[4px] border-[#101010] bg-white text-[#101010] transition duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[#18ff48] hover:shadow-[8px_8px_0_#101010] max-[640px]:h-16 max-[640px]:w-16'
+  const heroActionClassName =
+    'min-w-[204px] px-5 max-[640px]:w-full max-[640px]:min-w-0'
 
   return (
     <section id="hero" className="grid min-h-svh grid-rows-[auto_1fr] bg-[#f2f0e8]">
@@ -65,9 +85,36 @@ function HeroSection() {
             {profile.summary}
           </p>
 
+          <div className="flex flex-wrap gap-3 sm:gap-4">
+            <button
+              type="button"
+              className={`${homeButtonPrimaryClass} ${heroActionClassName}`}
+              onClick={() => scrollToSection('projects')}
+            >
+              <span>Ver proyectos</span>
+              <ArrowDownRight className="h-5 w-5" aria-hidden="true" />
+            </button>
+
+            {profile.cvDownloadUrl ? (
+              <a
+                className={`${homeButtonNeutralClass} ${heroActionClassName}`}
+                href={profile.cvDownloadUrl}
+                download={profile.cvDownloadName}
+                aria-label="Descargar CV en PDF"
+              >
+                <span>Descargar CV</span>
+                <Download className="h-5 w-5" aria-hidden="true" />
+              </a>
+            ) : null}
+          </div>
+
           <div className="flex flex-wrap gap-[12px] sm:gap-[14px]">
             {profile.socialLinks.map((link) => {
               const Icon = socialIconMap[link.label]
+
+              if (!Icon) {
+                return null
+              }
 
               return (
                 <a

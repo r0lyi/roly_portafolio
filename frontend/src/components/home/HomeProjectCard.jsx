@@ -73,19 +73,34 @@ function ProjectActions({ links, statusLabel }) {
   )
 }
 
-function ProjectVisualGallery({ project, activeImageId, onSelectImage }) {
+function ProjectVisualGallery({ project, activeImageId, onSelectImage, layout }) {
   const activeImage =
     project.images.find((image) => image.id === activeImageId) ?? project.images[0]
+  const isFeaturedLayout = layout === 'featured'
 
   if (!activeImage) {
     return <ProjectVisualEmptyState title={project.title} />
   }
 
   return (
-    <div className="grid gap-4 lg:gap-5">
-      <div className="relative overflow-hidden rounded-[28px] border border-[#d7d0c0] bg-[#f6f2e9] p-3 sm:p-4">
+    <div
+      className={`grid gap-4 lg:gap-5 ${
+        isFeaturedLayout && project.images.length > 1
+          ? 'xl:grid-cols-[108px_minmax(0,1fr)] xl:items-start'
+          : ''
+      }`}
+    >
+      <div
+        className={`relative overflow-hidden rounded-[28px] border border-[#d7d0c0] bg-[#f6f2e9] p-3 sm:p-4 ${
+          isFeaturedLayout && project.images.length > 1 ? 'xl:order-2' : ''
+        }`}
+      >
         <span className="pointer-events-none absolute inset-x-10 top-0 h-px bg-[linear-gradient(90deg,transparent_0%,rgba(16,16,16,0.12)_50%,transparent_100%)]" />
-        <div className="relative aspect-[16/9] overflow-hidden rounded-[22px] border border-[rgba(16,16,16,0.06)] bg-white">
+        <div
+          className={`relative overflow-hidden rounded-[22px] border border-[rgba(16,16,16,0.06)] bg-white ${
+            isFeaturedLayout ? 'aspect-[16/10] xl:min-h-[460px]' : 'aspect-[16/9]'
+          }`}
+        >
           <img
             className="h-full w-full object-contain object-center"
             src={resolveImageAssetUrl(activeImage.imageUrl)}
@@ -96,7 +111,13 @@ function ProjectVisualGallery({ project, activeImageId, onSelectImage }) {
       </div>
 
       {project.images.length > 1 ? (
-        <div className="grid grid-flow-col auto-cols-[minmax(96px,1fr)] gap-3 overflow-x-auto pb-1 [scrollbar-width:thin] sm:auto-cols-[minmax(120px,1fr)] lg:auto-cols-[minmax(136px,1fr)]">
+        <div
+          className={`grid gap-3 [scrollbar-width:thin] ${
+            isFeaturedLayout
+              ? 'order-2 grid-flow-col auto-cols-[minmax(96px,1fr)] overflow-x-auto pb-1 sm:auto-cols-[minmax(120px,1fr)] xl:order-1 xl:max-h-[540px] xl:grid-flow-row xl:auto-cols-auto xl:auto-rows-max xl:overflow-y-auto xl:overflow-x-visible xl:pb-0 xl:pr-2'
+              : 'grid-flow-col auto-cols-[minmax(96px,1fr)] overflow-x-auto pb-1 sm:auto-cols-[minmax(120px,1fr)] lg:auto-cols-[minmax(136px,1fr)]'
+          }`}
+        >
           {project.images.map((image, index) => {
             const isActive = image.id === activeImageId
 
@@ -108,7 +129,7 @@ function ProjectVisualGallery({ project, activeImageId, onSelectImage }) {
                   isActive
                     ? 'border-[#101010] bg-white shadow-[0_0_0_1px_rgba(16,16,16,0.05)]'
                     : 'border-[#d7d0c0] bg-[#f7f2e8] hover:border-[#101010] hover:-translate-y-0.5'
-                }`}
+                } ${isFeaturedLayout ? 'xl:w-full' : ''}`}
                 onClick={() => onSelectImage(image.id)}
                 aria-pressed={isActive}
                 aria-label={`Ver captura ${index + 1} de ${project.title}`}
@@ -141,25 +162,43 @@ function ProjectVisualGallery({ project, activeImageId, onSelectImage }) {
   )
 }
 
-function HomeProjectCard({ project }) {
+function HomeProjectCard({ project, layout = 'default' }) {
   const [activeImageId, setActiveImageId] = useState(project.images[0]?.id ?? null)
   const resolvedActiveImageId = project.images.some(
     (image) => image.id === activeImageId,
   )
     ? activeImageId
     : project.images[0]?.id ?? null
+  const isFeaturedLayout = layout === 'featured'
 
   return (
-    <article className={`grid h-full grid-rows-[auto_1fr] gap-0 overflow-hidden ${homePanelClass}`}>
-      <div className="border-b-[4px] border-[#101010] p-4 sm:p-5 lg:p-6">
+    <article
+      className={`grid h-full gap-0 overflow-hidden ${homePanelClass} ${
+        isFeaturedLayout
+          ? 'xl:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] xl:grid-rows-1'
+          : 'grid-rows-[auto_1fr]'
+      }`}
+    >
+      <div
+        className={`p-4 sm:p-5 lg:p-6 ${
+          isFeaturedLayout
+            ? 'border-b-[4px] border-[#101010] xl:border-r-[4px] xl:border-b-0'
+            : 'border-b-[4px] border-[#101010]'
+        }`}
+      >
         <ProjectVisualGallery
           project={project}
           activeImageId={resolvedActiveImageId}
           onSelectImage={setActiveImageId}
+          layout={layout}
         />
       </div>
 
-      <div className="grid h-full content-start gap-5 p-4 pb-3 sm:p-5 sm:pb-4 lg:gap-6 lg:p-6">
+      <div
+        className={`grid h-full content-start gap-5 p-4 pb-3 sm:p-5 sm:pb-4 lg:gap-6 lg:p-6 ${
+          isFeaturedLayout ? 'xl:content-center xl:p-8' : ''
+        }`}
+      >
         <div className="grid gap-3">
           {project.createdAtLabel ? (
             <p className="m-0 text-[0.72rem] font-black uppercase tracking-[0.16em] text-[#5b5b5b]">
@@ -167,11 +206,21 @@ function HomeProjectCard({ project }) {
             </p>
           ) : null}
 
-          <h3 className="m-0 font-['Manrope'] text-[clamp(1.75rem,2.7vw,2.5rem)] font-black uppercase leading-[0.94] tracking-[-0.06em] text-[#101010]">
+          <h3
+            className={`m-0 font-['Manrope'] font-black uppercase leading-[0.94] tracking-[-0.06em] text-[#101010] ${
+              isFeaturedLayout
+                ? 'text-[clamp(2rem,2.9vw,3rem)]'
+                : 'text-[clamp(1.75rem,2.7vw,2.5rem)]'
+            }`}
+          >
             {project.title}
           </h3>
 
-          <p className="m-0 max-w-none text-[0.98rem] font-bold leading-[1.65] text-[#4f4f4f]">
+          <p
+            className={`m-0 max-w-none font-bold leading-[1.65] text-[#4f4f4f] ${
+              isFeaturedLayout ? 'text-[1rem] xl:text-[1.04rem]' : 'text-[0.98rem]'
+            }`}
+          >
             {project.description}
           </p>
         </div>

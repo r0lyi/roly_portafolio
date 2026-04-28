@@ -1,8 +1,40 @@
 import HomeSectionShell from '../../components/home/HomeSectionShell.jsx'
 import { portfolioData } from '../../data/portfolio.js'
 
+function calculateAge(birthDate) {
+  if (typeof birthDate !== 'string') {
+    return ''
+  }
+
+  const [year, month, day] = birthDate.split('-').map(Number)
+
+  if (
+    !Number.isInteger(year) ||
+    !Number.isInteger(month) ||
+    !Number.isInteger(day)
+  ) {
+    return ''
+  }
+
+  const today = new Date()
+  let age = today.getFullYear() - year
+  const hasHadBirthdayThisYear =
+    today.getMonth() + 1 > month ||
+    (today.getMonth() + 1 === month && today.getDate() >= day)
+
+  if (!hasHadBirthdayThisYear) {
+    age -= 1
+  }
+
+  return age > 0 ? `${age} años` : ''
+}
+
 function AboutSection() {
   const { about, profile } = portfolioData
+  const aboutTickets = [
+    calculateAge(profile.birthDate),
+    ...(Array.isArray(about.tickets) ? about.tickets : []),
+  ].filter(Boolean)
 
   return (
     <HomeSectionShell
@@ -24,12 +56,8 @@ function AboutSection() {
           {about.body}
         </p>
 
-        <ul className="mt-7 flex flex-wrap gap-[14px] p-0 max-[640px]:mt-[22px] max-[640px]:gap-3" aria-label="Datos principales">
-          {[
-            profile.name,
-            profile.location,
-            profile.availability,
-          ].map((item) => (
+        <ul className="mt-7 flex flex-wrap gap-[14px] p-0 max-[640px]:mt-[22px] max-[640px]:gap-3" aria-label="Rasgos principales">
+          {aboutTickets.map((item) => (
             <li
               key={item}
               className="list-none border-[3px] border-[#f2f2f2] px-4 py-3 text-[0.9rem] font-black uppercase leading-[1.2] tracking-[0.05em] text-[#f2f2f2] max-[640px]:w-full"

@@ -61,6 +61,7 @@ function ProjectsLoadingState() {
 function ProjectsSection({ projectsState }) {
   const { selectedWorks } = portfolioData
   const dynamicProjects = projectsState?.data ?? []
+  const hasOddProjectCount = dynamicProjects.length % 2 === 1
 
   return (
     <section id="projects" className={`${homeSectionBaseClass} bg-[#f2f0e8]`}>
@@ -102,9 +103,26 @@ function ProjectsSection({ projectsState }) {
       !projectsState?.isEmpty ? (
         <div className="mt-8 w-full px-4 sm:px-6">
           <div className="mx-auto grid w-full max-w-[1560px] gap-8 xl:grid-cols-2">
-            {dynamicProjects.map((project) => (
-              <HomeProjectCard key={project.id} project={project} />
-            ))}
+            {dynamicProjects.map((project, index) => {
+              const isCenteredLastProject =
+                hasOddProjectCount && index === dynamicProjects.length - 1
+
+              return (
+                <div
+                  key={project.id}
+                  className={
+                    isCenteredLastProject
+                      ? 'h-full xl:col-span-2'
+                      : 'h-full'
+                  }
+                >
+                  <HomeProjectCard
+                    project={project}
+                    layout={isCenteredLastProject ? 'featured' : 'default'}
+                  />
+                </div>
+              )
+            })}
           </div>
         </div>
       ) : null}

@@ -4,7 +4,7 @@ from fastapi import Depends
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from sqlalchemy.orm import Session
 
-from app.database.session import get_db
+from app.db.session import get_db
 from app.models.user import User
 from app.services import auth_service
 

@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Date, Integer, String, Text
 
-from app.database.base import Base
+from app.db.base import Base
 
 
 class Experience(Base):
