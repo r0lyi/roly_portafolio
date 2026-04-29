@@ -18,26 +18,15 @@ class Environment(str, Enum):
     PRODUCTION = "production"
 
 
-def _load_environment_files() -> str:
+def _load_environment_file() -> None:
     original_environment_keys = set(os.environ)
 
     for key, value in dotenv_values(BACKEND_DIR / ".env").items():
         if value is not None and key not in original_environment_keys:
             os.environ.setdefault(key, value)
 
-    raw_environment = (os.getenv("APP_ENV") or Environment.LOCAL.value).strip().lower()
-    environment_name = raw_environment or Environment.LOCAL.value
-    environment_file = BACKEND_DIR / f".env.{environment_name}"
 
-    if environment_file.exists():
-        for key, value in dotenv_values(environment_file).items():
-            if value is not None and key not in original_environment_keys:
-                os.environ[key] = value
-
-    return environment_name
-
-
-_BOOTSTRAPPED_ENVIRONMENT = _load_environment_files()
+_load_environment_file()
 
 
 @dataclass(frozen=True)
@@ -66,7 +55,7 @@ class Settings:
 
 
 def _read_environment() -> Environment:
-    raw_environment = (os.getenv("APP_ENV") or _BOOTSTRAPPED_ENVIRONMENT).strip().lower()
+    raw_environment = (os.getenv("APP_ENV") or Environment.LOCAL.value).strip().lower()
 
     try:
         return Environment(raw_environment or Environment.LOCAL.value)
