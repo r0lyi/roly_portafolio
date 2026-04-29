@@ -62,6 +62,8 @@ uv run uvicorn app.main:app --reload
 - `DEBUG=false` recomendado
 - Debes configurar `DATABASE_URL` o todas las variables `DB_*`
 - `AUTO_CREATE_DEFAULT_ADMIN` queda desactivado por defecto
+- `PUBLIC_IMAGE_DIR` te permite cambiar donde se guardan y sirven imagenes
+- Si usas un proveedor como Supabase con `DB_*`, puedes necesitar `DB_SSLMODE=require`
 
 Ejemplo rapido:
 
@@ -69,6 +71,12 @@ Ejemplo rapido:
 cp .env.production.example .env.production
 uv run uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
+
+### Koyeb
+
+- Usa el `Procfile` del repo para arrancar con `gunicorn` enlazado a `0.0.0.0:$PORT`
+- Si despliegas solo el subdirectorio `backend` de un monorepo, configura `PUBLIC_IMAGE_DIR`
+- Si quieres persistir uploads, monta un volumen y apunta `PUBLIC_IMAGE_DIR` a esa ruta
 
 ## Endpoints base
 

@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from enum import Enum
 from functools import lru_cache
 from pathlib import Path
+from urllib.parse import quote, urlencode
 
 from dotenv import dotenv_values
 
@@ -96,6 +97,14 @@ def _read_value(name: str, *, default: str | None = None) -> str | None:
     return normalized_value or default
 
 
+def _read_path(name: str, *, default: Path) -> Path:
+    raw_value = _read_value(name)
+    if raw_value is None:
+        return default
+
+    return Path(raw_value).expanduser()
+
+
 def _build_database_url(environment: Environment) -> str:
     direct_database_url = _read_value("DATABASE_URL")
     if direct_database_url:
@@ -125,10 +134,18 @@ def _build_database_url(environment: Environment) -> str:
             f"Database configuration is incomplete. Missing values: {missing_fields}."
         )
 
+    database_query = {}
+    db_sslmode = _read_value("DB_SSLMODE")
+    if db_sslmode:
+        database_query["sslmode"] = db_sslmode
+
+    query_string = f"?{urlencode(database_query)}" if database_query else ""
+
     return (
         "postgresql+psycopg2://"
-        f"{components['DB_USER']}:{components['DB_PASSWORD']}"
-        f"@{components['DB_HOST']}:{components['DB_PORT']}/{components['DB_NAME']}"
+        f"{quote(components['DB_USER'], safe='')}:{quote(components['DB_PASSWORD'], safe='')}"
+        f"@{components['DB_HOST']}:{components['DB_PORT']}/{quote(components['DB_NAME'], safe='')}"
+        f"{query_string}"
     )
 
 
@@ -181,7 +198,10 @@ def get_settings() -> Settings:
         or f"{public_image_url_prefix}/proyectos"
     )
 
-    public_image_dir = FRONTEND_DIR / "public" / public_image_url_prefix.strip("/")
+    public_image_dir = _read_path(
+        "PUBLIC_IMAGE_DIR",
+        default=FRONTEND_DIR / "public" / public_image_url_prefix.strip("/"),
+    )
 
     return Settings(
         app_name=_read_value("APP_NAME", default="Portfolio API") or "Portfolio API",
