@@ -5,8 +5,4 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 .env
-.env.local
-.env.production
 !.env.example
-!.env.local.example
-!.env.production.example
