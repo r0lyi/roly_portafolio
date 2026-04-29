@@ -74,6 +74,13 @@ cp .env.production.example .env.production
 uv run uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
+### Railway
+
+- Usa [`.env.railway.example`](/home/jelen/Documentos/roly_portafolio/backend/.env.railway.example:1) como referencia para las variables del panel de Railway
+- `PORT` no hace falta configurarlo manualmente porque Railway lo inyecta
+- Si vas a subir imagenes desde el backend, monta un volumen y apunta `PUBLIC_IMAGE_DIR` a una ruta persistente como `/data/img`
+- Si conectas una base de datos externa o una variable que Railway te expone con otro nombre, copia su valor a `DATABASE_URL`
+
 ### Koyeb
 
 - Usa el `Procfile` del repo para arrancar con `gunicorn` enlazado a `0.0.0.0:$PORT`
