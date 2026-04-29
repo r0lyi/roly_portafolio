@@ -46,6 +46,10 @@ class Settings:
     environment: Environment
     debug: bool
     api_prefix: str
+    cors_allow_origins: tuple[str, ...]
+    cors_allow_credentials: bool
+    cors_allow_methods: tuple[str, ...]
+    cors_allow_headers: tuple[str, ...]
     database_url: str
     database_echo: bool
     auto_create_default_admin: bool
@@ -95,6 +99,15 @@ def _read_value(name: str, *, default: str | None = None) -> str | None:
 
     normalized_value = raw_value.strip()
     return normalized_value or default
+
+
+def _read_csv_values(name: str, *, default: tuple[str, ...] = ()) -> tuple[str, ...]:
+    raw_value = os.getenv(name)
+    if raw_value is None:
+        return default
+
+    values = tuple(value.strip() for value in raw_value.split(",") if value.strip())
+    return values or default
 
 
 def _read_path(name: str, *, default: Path) -> Path:
@@ -179,6 +192,29 @@ def get_settings() -> Settings:
     environment = _read_environment()
     debug = _read_bool("DEBUG", default=environment is Environment.LOCAL)
     database_echo = _read_bool("DATABASE_ECHO", default=debug)
+    default_cors_allow_origins = (
+        (
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+        )
+        if environment is Environment.LOCAL
+        else ()
+    )
+    cors_allow_origins = _read_csv_values(
+        "CORS_ALLOW_ORIGINS",
+        default=default_cors_allow_origins,
+    )
+    cors_allow_methods = _read_csv_values(
+        "CORS_ALLOW_METHODS",
+        default=("*",),
+    )
+    cors_allow_headers = _read_csv_values(
+        "CORS_ALLOW_HEADERS",
+        default=("*",),
+    )
+    cors_allow_credentials = _read_bool("CORS_ALLOW_CREDENTIALS", default=False)
     auto_create_default_admin = _read_bool(
         "AUTO_CREATE_DEFAULT_ADMIN",
         default=environment is Environment.LOCAL,
@@ -208,6 +244,10 @@ def get_settings() -> Settings:
         environment=environment,
         debug=debug,
         api_prefix=_read_value("API_PREFIX", default="/api") or "/api",
+        cors_allow_origins=cors_allow_origins,
+        cors_allow_credentials=cors_allow_credentials,
+        cors_allow_methods=cors_allow_methods,
+        cors_allow_headers=cors_allow_headers,
         database_url=_build_database_url(environment),
         database_echo=database_echo,
         auto_create_default_admin=auto_create_default_admin,
