@@ -1,0 +1,222 @@
+from pathlib import Path
+from uuid import uuid4
+
+from fastapi import HTTPException, UploadFile, status
+from sqlalchemy import select
+from sqlalchemy.orm import Session, selectinload
+
+from app.core.config import get_settings
+from app.models.project import Project
+from app.models.project_image import ProjectImage
+from app.models.technology import Technology
+from app.schemas.project import ProjectCreate, ProjectUpdate
+from app.schemas.project_image import ProjectImageCreate, ProjectImageUpdate
+from app.utils.asset_paths import normalize_public_asset_path
+
+settings = get_settings()
+
+PROJECT_LOAD_OPTIONS = (
+    selectinload(Project.technologies),
+    selectinload(Project.images),
+)
+PROJECT_IMAGE_DIRECTORY = settings.project_image_dir
+PROJECT_IMAGE_UPLOAD_DIRECTORY = settings.project_image_upload_dir
+PROJECT_IMAGE_EXTENSIONS = {".svg", ".png", ".jpg", ".jpeg", ".webp"}
+
+
+def list_projects(db: Session) -> list[Project]:
+    stmt = (
+        select(Project)
+        .options(*PROJECT_LOAD_OPTIONS)
+        .order_by(Project.created_at.desc(), Project.id.desc())
+    )
+    return db.scalars(stmt).all()
+
+
+def get_project_or_404(db: Session, project_id: int) -> Project:
+    stmt = (
+        select(Project)
+        .options(*PROJECT_LOAD_OPTIONS)
+        .where(Project.id == project_id)
+    )
+    project = db.scalars(stmt).first()
+    if project is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
+    return project
+
+
+def create_project(db: Session, payload: ProjectCreate) -> Project:
+    project = Project(
+        **payload.model_dump(exclude={"images", "technology_ids"})
+    )
+    project.technologies = _load_technologies(db, payload.technology_ids)
+    project.images = _build_project_images(payload.images)
+
+    db.add(project)
+    db.commit()
+    return get_project_or_404(db, project.id)
+
+
+def update_project(db: Session, project_id: int, payload: ProjectUpdate) -> Project:
+    project = get_project_or_404(db, project_id)
+    update_data = payload.model_dump(exclude_unset=True)
+
+    for field, value in update_data.items():
+        if field in {"images", "technology_ids"}:
+            continue
+        setattr(project, field, value)
+
+    if "technology_ids" in update_data:
+        technology_ids = update_data["technology_ids"] or []
+        project.technologies = _load_technologies(db, technology_ids)
+
+    if "images" in update_data:
+        project.images = _build_project_images(update_data["images"])
+
+    db.commit()
+    return get_project_or_404(db, project.id)
+
+
+def delete_project(db: Session, project_id: int) -> None:
+    project = get_project_or_404(db, project_id)
+    db.delete(project)
+    db.commit()
+
+
+def list_project_images(db: Session, project_id: int) -> list[ProjectImage]:
+    get_project_or_404(db, project_id)
+    stmt = (
+        select(ProjectImage)
+        .where(ProjectImage.project_id == project_id)
+        .order_by(ProjectImage.position.asc(), ProjectImage.id.asc())
+    )
+    return db.scalars(stmt).all()
+
+
+def get_project_image_or_404(db: Session, project_id: int, image_id: int) -> ProjectImage:
+    get_project_or_404(db, project_id)
+    stmt = select(ProjectImage).where(
+        ProjectImage.id == image_id,
+        ProjectImage.project_id == project_id,
+    )
+    image = db.scalars(stmt).first()
+    if image is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project image not found")
+    return image
+
+
+def create_project_image(db: Session, project_id: int, payload: ProjectImageCreate) -> ProjectImage:
+    get_project_or_404(db, project_id)
+
+    image_data = payload.model_dump()
+    image_data["image_url"] = normalize_public_asset_path(
+        image_data["image_url"],
+        default_directory=PROJECT_IMAGE_DIRECTORY,
+    )
+    image = ProjectImage(project_id=project_id, **image_data)
+    db.add(image)
+    db.commit()
+    db.refresh(image)
+    return image
+
+
+def update_project_image(
+    db: Session,
+    project_id: int,
+    image_id: int,
+    payload: ProjectImageUpdate,
+) -> ProjectImage:
+    image = get_project_image_or_404(db, project_id, image_id)
+
+    for field, value in payload.model_dump(exclude_unset=True).items():
+        if field == "image_url" and value is not None:
+            value = normalize_public_asset_path(
+                value,
+                default_directory=PROJECT_IMAGE_DIRECTORY,
+            )
+        setattr(image, field, value)
+
+    db.commit()
+    db.refresh(image)
+    return image
+
+
+def delete_project_image(db: Session, project_id: int, image_id: int) -> None:
+    image = get_project_image_or_404(db, project_id, image_id)
+    db.delete(image)
+    db.commit()
+
+
+def _load_technologies(db: Session, technology_ids: list[int]) -> list[Technology]:
+    unique_ids = _unique_ids(technology_ids)
+    if not unique_ids:
+        return []
+
+    stmt = select(Technology).where(Technology.id.in_(unique_ids))
+    technologies = db.scalars(stmt).all()
+    technologies_by_id = {technology.id: technology for technology in technologies}
+    missing_ids = [technology_id for technology_id in unique_ids if technology_id not in technologies_by_id]
+    if missing_ids:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Technologies not found: {missing_ids}",
+        )
+
+    return [technologies_by_id[technology_id] for technology_id in unique_ids]
+
+
+def _build_project_images(images: list[ProjectImageCreate | dict] | None) -> list[ProjectImage]:
+    if not images:
+        return []
+
+    project_images: list[ProjectImage] = []
+    for image in images:
+        image_data = image.model_dump() if hasattr(image, "model_dump") else image
+        image_data["image_url"] = normalize_public_asset_path(
+            image_data["image_url"],
+            default_directory=PROJECT_IMAGE_DIRECTORY,
+        )
+        project_images.append(ProjectImage(**image_data))
+
+    return project_images
+
+
+def _unique_ids(values: list[int]) -> list[int]:
+    seen: set[int] = set()
+    unique_values: list[int] = []
+    for value in values:
+        if value not in seen:
+            seen.add(value)
+            unique_values.append(value)
+    return unique_values
+
+
+async def save_project_image_file(project_id: int, image: UploadFile | None) -> str | None:
+    if image is None:
+        return None
+
+    filename = (image.filename or "").strip()
+    extension = Path(filename).suffix.lower()
+
+    if extension not in PROJECT_IMAGE_EXTENSIONS:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Solo se permiten imagenes SVG, PNG, JPG, JPEG o WEBP.",
+        )
+
+    content = await image.read()
+    await image.close()
+
+    if not content:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="La imagen enviada esta vacia.",
+        )
+
+    PROJECT_IMAGE_UPLOAD_DIRECTORY.mkdir(parents=True, exist_ok=True)
+
+    generated_filename = f"p{project_id}-{uuid4().hex[:6]}{extension}"
+    target_path = PROJECT_IMAGE_UPLOAD_DIRECTORY / generated_filename
+    target_path.write_bytes(content)
+
+    return f"{PROJECT_IMAGE_DIRECTORY}/{generated_filename}"
