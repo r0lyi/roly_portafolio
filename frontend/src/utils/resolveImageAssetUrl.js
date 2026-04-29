@@ -1,3 +1,5 @@
+import { apiOrigin } from '../services/api/config.js'
+
 const EXTERNAL_URL_PATTERN = /^(?:[a-z][a-z\d+\-.]*:|\/\/)/i
 
 function sanitizeImagePath(value) {
@@ -49,5 +51,11 @@ export function normalizeImageAssetPath(
 }
 
 export function resolveImageAssetUrl(value, options) {
-  return normalizeImageAssetPath(value, options)
+  const normalizedPath = normalizeImageAssetPath(value, options)
+
+  if (!normalizedPath || EXTERNAL_URL_PATTERN.test(normalizedPath)) {
+    return normalizedPath
+  }
+
+  return new URL(normalizedPath, `${apiOrigin}/`).toString()
 }
