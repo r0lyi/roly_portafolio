@@ -46,6 +46,7 @@ La configuracion se carga en este orden:
 
 - `APP_ENV=local`
 - `DEBUG=true` por defecto
+- `CORS_ALLOW_ORIGINS` permite llamadas desde el frontend en otro origen
 - Si no defines `DATABASE_URL`, usa las variables `DB_*`
 - `AUTO_CREATE_DEFAULT_ADMIN=true` por defecto
 
@@ -60,6 +61,7 @@ uv run uvicorn app.main:app --reload
 
 - `APP_ENV=production`
 - `DEBUG=false` recomendado
+- Puedes usar `CORS_ALLOW_ORIGINS=*` si quieres aceptar cualquier frontend; `0.0.0.0` no sirve como origen CORS para navegador
 - Debes configurar `DATABASE_URL` o todas las variables `DB_*`
 - `AUTO_CREATE_DEFAULT_ADMIN` queda desactivado por defecto
 - `PUBLIC_IMAGE_DIR` te permite cambiar donde se guardan y sirven imagenes

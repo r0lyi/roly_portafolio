@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from app.api.router import api_router
@@ -21,6 +22,14 @@ def create_application() -> FastAPI:
         debug=settings.debug,
         lifespan=lifespan,
     )
+    if settings.cors_allow_origins:
+        application.add_middleware(
+            CORSMiddleware,
+            allow_origins=list(settings.cors_allow_origins),
+            allow_credentials=settings.cors_allow_credentials,
+            allow_methods=list(settings.cors_allow_methods),
+            allow_headers=list(settings.cors_allow_headers),
+        )
     application.include_router(api_router)
     application.mount(
         settings.public_image_url_prefix,
