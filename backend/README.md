@@ -39,8 +39,7 @@ app/
 La configuracion se carga en este orden:
 
 1. `.env`
-2. `.env.local` o `.env.production` segun `APP_ENV`
-3. Variables reales del sistema si existen
+2. Variables reales del sistema si existen
 
 ### Local
 
@@ -53,7 +52,7 @@ La configuracion se carga en este orden:
 Ejemplo rapido:
 
 ```bash
-cp .env.local.example .env.local
+cp .env.example .env
 uv run uvicorn app.main:app --reload
 ```
 
@@ -70,13 +69,13 @@ uv run uvicorn app.main:app --reload
 Ejemplo rapido:
 
 ```bash
-cp .env.production.example .env.production
+cp .env.example .env
 uv run uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
 ### Railway
 
-- Usa [`.env.railway.example`](/home/jelen/Documentos/roly_portafolio/backend/.env.railway.example:1) como referencia para las variables del panel de Railway
+- Usa [`.env.example`](/home/jelen/Documentos/roly_portafolio/backend/.env.example:1) como referencia unica para las variables
 - `PORT` no hace falta configurarlo manualmente porque Railway lo inyecta
 - Si vas a subir imagenes desde el backend, monta un volumen y apunta `PUBLIC_IMAGE_DIR` a una ruta persistente como `/data/img`
 - Si conectas una base de datos externa o una variable que Railway te expone con otro nombre, copia su valor a `DATABASE_URL`
@@ -97,4 +96,4 @@ uv run uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 - Los imports antiguos de `app/api/routes` y `app/database` siguen funcionando como compatibilidad.
 - Para codigo nuevo, usa siempre `app.api.v1`, `app.core` y `app.db`.
-- Los archivos de ejemplo `.env*.example` sirven como plantilla; evita versionar credenciales reales.
+- Usa solo `.env` como archivo local de configuracion y evita versionar credenciales reales.
