@@ -1,6 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,700&display=swap');
 @import 'tailwindcss';
 
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  forced-color-adjust: none;
+}
+
+body {
+  background: white;
+  color: black;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -80,8 +94,10 @@ code {
   animation: home-tech-marquee-ltr var(--marquee-duration) linear infinite;
 }
 
-.home-tech-marquee:hover .home-tech-marquee__track {
-  animation-play-state: paused;
+@media (hover: hover) and (pointer: fine) {
+  .home-tech-marquee:hover .home-tech-marquee__track {
+    animation-play-state: paused;
+  }
 }
 
 @keyframes home-tech-marquee-rtl {

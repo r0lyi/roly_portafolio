@@ -2,10 +2,10 @@ const homeButtonBaseClass =
   'inline-flex items-center justify-center gap-2.5 border-[4px] border-[#101010] px-4 py-[0.9rem] font-black uppercase tracking-[0.04em] text-[#101010] transition duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[8px_8px_0_#101010] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:cursor-not-allowed disabled:opacity-70'
 
 export const homeSectionBaseClass =
-  'border-t-[4px] border-[#101010] py-[84px] max-[640px]:py-14'
+  'border-t-[4px] border-[#101010] py-[84px] max-[1024px]:py-[72px] max-[640px]:py-14'
 
 export const homeSectionContainerClass =
-  'mx-auto w-full max-w-[1180px] px-4 sm:px-6'
+  'mx-auto w-full max-w-[1180px] px-4 sm:px-6 lg:px-8'
 
 export const homePanelClass =
   'border-[4px] border-[#101010] bg-[#fffef8] shadow-[8px_8px_0_rgba(16,16,16,0.16)] max-[640px]:shadow-[6px_6px_0_rgba(16,16,16,0.16)]'

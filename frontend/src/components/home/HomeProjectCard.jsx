@@ -60,7 +60,7 @@ function ProjectActions({ links, statusLabel }) {
   }
 
   return (
-    <div className="mt-auto grid gap-3 sm:grid-cols-2">
+    <div className="mt-auto grid gap-3 md:grid-cols-2">
       {links.map((link) => (
         <ProjectActionLink
           key={`${link.label}-${link.href}`}
@@ -114,8 +114,8 @@ function ProjectVisualGallery({ project, activeImageId, onSelectImage, layout })
         <div
           className={`grid gap-3 [scrollbar-width:thin] ${
             isFeaturedLayout
-              ? 'order-2 grid-flow-col auto-cols-[minmax(96px,1fr)] overflow-x-auto pb-1 sm:auto-cols-[minmax(120px,1fr)] xl:order-1 xl:max-h-[540px] xl:grid-flow-row xl:auto-cols-auto xl:auto-rows-max xl:overflow-y-auto xl:overflow-x-visible xl:pb-0 xl:pr-2'
-              : 'grid-flow-col auto-cols-[minmax(96px,1fr)] overflow-x-auto pb-1 sm:auto-cols-[minmax(120px,1fr)] lg:auto-cols-[minmax(136px,1fr)]'
+              ? 'order-2 grid-flow-col auto-cols-[minmax(92px,1fr)] overflow-x-auto pb-1 sm:auto-cols-[minmax(120px,1fr)] xl:order-1 xl:max-h-[540px] xl:grid-flow-row xl:auto-cols-auto xl:auto-rows-max xl:overflow-y-auto xl:overflow-x-visible xl:pb-0 xl:pr-2'
+              : 'grid-flow-col auto-cols-[minmax(92px,1fr)] overflow-x-auto pb-1 sm:auto-cols-[minmax(120px,1fr)] lg:auto-cols-[minmax(136px,1fr)]'
           }`}
         >
           {project.images.map((image, index) => {
