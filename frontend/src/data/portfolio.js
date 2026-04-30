@@ -14,7 +14,8 @@ export const portfolioData = {
       'Frontend y backend estructurados para escalar, con una interfaz sólida, componentes reutilizables y una arquitectura preparada para integrarse con tecnologías modernas y servicios robustos.',
     location: 'React + Vite / FastAPI',
     availability: 'Disponible para nuevas iteraciones',
-    availabilityLabel: 'AVAILABLE_FOR_WORK',
+    availabilityLabel: 'Listo para lo moderno',
+    portraitUrl: '/public/perfil.svg',
     cvDownloadUrl: '/RolySilvestreGuzmán_DesarrolladorWeb_CV.pdf',
     cvDownloadName: 'RolySilvestreGuzman_DesarrolladorWeb_CV.pdf',
     socialLinks: [

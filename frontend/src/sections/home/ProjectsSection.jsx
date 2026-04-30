@@ -93,7 +93,7 @@ function ProjectsSection({ projectsState }) {
       </div>
 
       {projectsState?.isLoading ? (
-        <div className="mt-8 w-full px-4 sm:px-6">
+        <div className="mt-8 w-full px-4 sm:px-6 lg:px-8">
           <ProjectsLoadingState />
         </div>
       ) : null}
@@ -101,7 +101,7 @@ function ProjectsSection({ projectsState }) {
       {!projectsState?.isLoading &&
       !projectsState?.error &&
       !projectsState?.isEmpty ? (
-        <div className="mt-8 w-full px-4 sm:px-6">
+        <div className="mt-8 w-full px-4 sm:px-6 lg:px-8">
           <div className="mx-auto grid w-full max-w-[1560px] gap-8 xl:grid-cols-2">
             {dynamicProjects.map((project, index) => {
               const isCenteredLastProject =
@@ -112,7 +112,7 @@ function ProjectsSection({ projectsState }) {
                   key={project.id}
                   className={
                     isCenteredLastProject
-                      ? 'h-full xl:col-span-2'
+                      ? 'h-full xl:col-span-2 xl:px-[clamp(0px,8vw,140px)]'
                       : 'h-full'
                   }
                 >

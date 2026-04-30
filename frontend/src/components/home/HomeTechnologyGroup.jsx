@@ -1,12 +1,12 @@
 import { resolveImageAssetUrl } from '../../utils/resolveImageAssetUrl.js'
 
-function TechnologyLogo({ item }) {
+function TechnologyLogo({ item, className = 'h-[76px] w-[76px] md:h-[92px] md:w-[92px]' }) {
   const imageUrl = item.imgUrl ?? ''
 
   if (imageUrl) {
     return (
       <img
-        className="h-[76px] w-[76px] object-contain md:h-[92px] md:w-[92px]"
+        className={`${className} object-contain`}
         src={resolveImageAssetUrl(imageUrl)}
         alt={item.name}
         loading="lazy"
@@ -17,7 +17,7 @@ function TechnologyLogo({ item }) {
 
   return (
     <div
-      className="grid h-[76px] w-[76px] place-items-center rounded-[24px] bg-[linear-gradient(135deg,#101820_0%,#244b57_100%)] text-[1.12rem] font-black uppercase tracking-[0.04em] text-[#f8fff9] md:h-[92px] md:w-[92px]"
+      className={`grid place-items-center rounded-[24px] bg-[linear-gradient(135deg,#101820_0%,#244b57_100%)] text-[1.12rem] font-black uppercase tracking-[0.04em] text-[#f8fff9] ${className}`}
       title={item.name}
       aria-hidden="true"
     >
@@ -39,6 +39,36 @@ function createMarqueeItems(items, minimumItems = 12) {
       marqueeKey: `${item.id}-${repeatIndex}`,
     })),
   ).flat()
+}
+
+export function HomeTechnologyCard({
+  item,
+  className = '',
+  showLabel = false,
+}) {
+  return (
+    <article
+      className={`grid place-items-center rounded-[34px] bg-[rgba(255,255,255,0.82)] p-7 shadow-[0_18px_40px_rgba(16,16,16,0.08)] ring-1 ring-[rgba(16,16,16,0.05)] backdrop-blur-[8px] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_44px_rgba(16,16,16,0.12)] ${className}`}
+      title={item.name}
+      aria-label={item.name}
+    >
+      <TechnologyLogo
+        item={item}
+        className={
+          showLabel
+            ? 'h-[62px] w-[62px] sm:h-[74px] sm:w-[74px]'
+            : 'h-[76px] w-[76px] md:h-[92px] md:w-[92px]'
+        }
+      />
+      {showLabel ? (
+        <span className="text-center text-[0.72rem] font-black uppercase leading-[1.2] tracking-[0.05em] text-[#101010] sm:text-[0.78rem]">
+          {item.name}
+        </span>
+      ) : (
+        <span className="sr-only">{item.name}</span>
+      )}
+    </article>
+  )
 }
 
 function HomeTechnologyGroup({
@@ -70,15 +100,11 @@ function HomeTechnologyGroup({
             aria-hidden={segmentIndex === 1}
           >
             {marqueeItems.map((item) => (
-              <article
+              <HomeTechnologyCard
                 key={`${segmentIndex}-${item.marqueeKey}`}
-                className="grid h-[176px] w-[176px] shrink-0 place-items-center rounded-[34px] bg-[rgba(255,255,255,0.82)] p-7 shadow-[0_18px_40px_rgba(16,16,16,0.08)] ring-1 ring-[rgba(16,16,16,0.05)] backdrop-blur-[8px] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_44px_rgba(16,16,16,0.12)] max-[640px]:h-[148px] max-[640px]:w-[148px] max-[640px]:rounded-[28px] max-[640px]:p-5"
-                title={item.name}
-                aria-label={item.name}
-              >
-                <TechnologyLogo item={item} />
-                <span className="sr-only">{item.name}</span>
-              </article>
+                item={item}
+                className="h-[176px] w-[176px] shrink-0 max-[640px]:h-[148px] max-[640px]:w-[148px] max-[640px]:rounded-[28px] max-[640px]:p-5"
+              />
             ))}
           </div>
         ))}
