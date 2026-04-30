@@ -40,7 +40,7 @@ function AboutSection() {
     <HomeSectionShell
       id="about"
       backgroundClassName="bg-[#030303]"
-      contentClassName="grid gap-6 md:grid-cols-[minmax(220px,0.7fr)_minmax(0,1.3fr)] md:gap-11"
+      contentClassName="grid gap-6 lg:grid-cols-[minmax(220px,0.7fr)_minmax(0,1.3fr)] lg:gap-11"
     >
       <div className="min-w-0">
         <p className="m-0 text-[clamp(2.5rem,5.5vw,5rem)] font-black uppercase leading-[0.92] tracking-[-0.06em] text-[#18ff48]">

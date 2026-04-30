@@ -3,7 +3,7 @@ import { homePanelClass } from '../../styles/homeBrutalistClasses.js'
 function HomeExperienceCard({ experience }) {
   return (
     <article
-      className={`grid gap-5 px-[14px] py-[18px] sm:px-[18px] sm:py-[22px] sm:[grid-template-columns:minmax(160px,220px)_minmax(0,1fr)] ${homePanelClass}`}
+      className={`grid gap-5 px-[14px] py-[18px] sm:px-[18px] sm:py-[22px] md:[grid-template-columns:minmax(170px,220px)_minmax(0,1fr)] ${homePanelClass}`}
     >
       <div className="grid content-start gap-3">
         <p className="m-0 w-fit border-[4px] border-[#101010] bg-[#101010] px-[0.72rem] py-[0.48rem] text-[0.84rem] font-black uppercase leading-none tracking-[0.02em] text-white">

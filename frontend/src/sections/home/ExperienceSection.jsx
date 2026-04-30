@@ -14,7 +14,7 @@ function ExperiencesLoadingState() {
       {Array.from({ length: 3 }, (_, index) => (
         <div
           key={`experience-skeleton-${index}`}
-          className={`grid gap-5 px-[14px] py-[18px] sm:px-[18px] sm:py-[22px] sm:[grid-template-columns:minmax(160px,220px)_minmax(0,1fr)] ${homePanelClass}`}
+          className={`grid gap-5 px-[14px] py-[18px] sm:px-[18px] sm:py-[22px] md:[grid-template-columns:minmax(170px,220px)_minmax(0,1fr)] ${homePanelClass}`}
         >
           <div className="grid gap-3">
             <div className="h-8 w-32 animate-pulse bg-[#d8d0bc]" />

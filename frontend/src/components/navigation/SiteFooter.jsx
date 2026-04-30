@@ -30,13 +30,13 @@ function SiteFooter() {
 
   return (
     <footer className="border-t-[4px] border-[#101010] bg-[#f2f0e8] text-[#101010]">
-      <div className="mx-auto flex w-full max-w-[1180px] items-center justify-between gap-6 px-6 py-[26px] max-[960px]:flex-col max-[960px]:items-start">
+      <div className="mx-auto flex w-full max-w-[1180px] items-center justify-between gap-6 px-4 py-[26px] sm:px-6 lg:px-8 max-[960px]:flex-col max-[960px]:items-start">
         <p className="m-0 text-[0.95rem] font-black uppercase leading-[1.2] tracking-[-0.03em] max-[640px]:text-[0.88rem]">
           ©{new Date().getFullYear()}_{contact.footerLabel}
         </p>
 
         <nav
-          className="flex flex-wrap items-center justify-end gap-x-[26px] gap-y-[14px] max-[960px]:justify-start max-[640px]:gap-x-[18px] max-[640px]:gap-y-[10px]"
+          className="flex flex-wrap items-center justify-end gap-x-[26px] gap-y-[14px] max-[960px]:w-full max-[960px]:justify-start max-[640px]:gap-x-[18px] max-[640px]:gap-y-[10px]"
           aria-label="Enlaces del pie de pagina"
         >
           {footerLinks.map((link) => (
